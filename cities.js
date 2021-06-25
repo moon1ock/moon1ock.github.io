@@ -26,7 +26,6 @@ var NYcone = new THREE.Mesh(NYGeom, NYMat);
 
 scene.add(NYcone);
 
-// edges
 var NYEdgesGeom = new THREE.EdgesGeometry(NYGeom);
 var NYedges = new THREE.LineSegments(NYEdgesGeom, new THREE.LineBasicMaterial({color: "red"}));
 NYcone.add(NYedges);
@@ -35,8 +34,8 @@ NYcone.add(NYedges);
 // Kyiv
 
 var h = 0.5
-var KGeom = new THREE.ConeBufferGeometry(0.5,h ,8);
-KGeom.translate(2, h * 0.5, 0);
+var KGeom = new THREE.ConeBufferGeometry(0.5,h ,7);
+KGeom.translate(0, h * 0.5, 0);
 var KMat = new THREE.MeshBasicMaterial({color: "green"});
 var Kcone = new THREE.Mesh(KGeom, KMat);
 
@@ -46,8 +45,6 @@ scene.add(Kcone);
 var KEdgesGeom = new THREE.EdgesGeometry(KGeom);
 var Kedges = new THREE.LineSegments(KEdgesGeom, new THREE.LineBasicMaterial({color: "orange"}));
 Kcone.add(Kedges);
-
-
 
 ///////////
 
@@ -61,6 +58,15 @@ var shift = new THREE.Vector3(); // distance between position of an object and p
 var isDragging = false;
 var dragObject;
 
+
+
+function getDistance(){
+
+
+	return Math.sqrt( (NYcone.position.x - Kcone.position.x)**2 +  (NYcone.position.z - Kcone.position.z)**2 )
+}
+
+
 // events
 document.addEventListener("pointermove", event => {
 
@@ -71,13 +77,17 @@ document.addEventListener("pointermove", event => {
     if (isDragging) {
     	raycaster.ray.intersectPlane(plane, planeIntersect);
       dragObject.position.addVectors(planeIntersect, shift);
+		console.log(getDistance())
+
     }
 });
 
+
+
+
 document.addEventListener("pointerdown", () => {
-		console.log("HELLO")
 		var intersects = raycaster.intersectObjects([NYcone, Kcone]);
-		console.log(intersects)
+
       if (intersects.length > 0) {
 			controls.enabled = false;
 			pIntersect.copy(intersects[0].point);
@@ -85,6 +95,7 @@ document.addEventListener("pointerdown", () => {
 			shift.subVectors(intersects[0].object.position, intersects[0].point);
 			isDragging = true;
 			dragObject = intersects[0].object;
+
     }
 } );
 
