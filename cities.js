@@ -14,12 +14,12 @@ document.body.appendChild(renderer.domElement);
 
 var controls = new OrbitControls(camera, renderer.domElement);
 
-scene.add(new THREE.GridHelper(50, 50));
+scene.add(new THREE.GridHelper(70, 70));
 
 // New York
 ////////////////////
-var h = 1.5
-var NYGeom = new THREE.ConeBufferGeometry(1.5,h ,8);
+var h = 2
+var NYGeom = new THREE.ConeBufferGeometry(2,h ,8);
 NYGeom.translate(0, h * 0.5, 0);
 var NYMat = new THREE.MeshBasicMaterial({color: "blue"});
 var NYcone = new THREE.Mesh(NYGeom, NYMat);
@@ -33,8 +33,8 @@ NYcone.add(NYedges);
 /////////////////////////
 // Kyiv
 
-var h = 1.5
-var KGeom = new THREE.ConeBufferGeometry(1.5,h ,7);
+var h = 2
+var KGeom = new THREE.ConeBufferGeometry(2,h ,7);
 KGeom.translate(0, h * 0.5, 0);
 var KMat = new THREE.MeshBasicMaterial({color: "green"});
 var Kcone = new THREE.Mesh(KGeom, KMat);
