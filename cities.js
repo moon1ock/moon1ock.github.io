@@ -18,8 +18,8 @@ scene.add(new THREE.GridHelper(70, 70));
 
 // New York
 ////////////////////
-var h = 5
-var NYGeom = new THREE.ConeBufferGeometry(5,h ,8);
+var h = 1
+var NYGeom = new THREE.ConeBufferGeometry(1,h ,8);
 NYGeom.translate(0, h * 0.5, 0);
 var NYMat = new THREE.MeshBasicMaterial({color: "blue"});
 var NYcone = new THREE.Mesh(NYGeom, NYMat);
@@ -33,8 +33,8 @@ NYcone.add(NYedges);
 /////////////////////////
 // Kyiv
 
-var h = 5
-var KGeom = new THREE.ConeBufferGeometry(5,h ,7);
+var h = 1
+var KGeom = new THREE.ConeBufferGeometry(1,h ,7);
 KGeom.translate(0, h * 0.5, 0);
 var KMat = new THREE.MeshBasicMaterial({color: "green"});
 var Kcone = new THREE.Mesh(KGeom, KMat);
