@@ -1,6 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 
-import * as dat from 'dat.gui'
+// import * as dat from 'dat.gui'
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
 
 var scene = new THREE.Scene();
