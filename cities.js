@@ -14,7 +14,7 @@ document.body.appendChild(renderer.domElement);
 
 var controls = new OrbitControls(camera, renderer.domElement);
 
-scene.add(new THREE.GridHelper(20, 20));
+scene.add(new THREE.GridHelper(50, 50));
 
 // New York
 ////////////////////
