@@ -4,30 +4,52 @@ import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/contro
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
-camera.position.set(3, 5, 8);
+camera.position.set(15, 15, 15);
 camera.lookAt(scene.position);
+
 var renderer = new THREE.WebGLRenderer({antialias: true});
+
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
 var controls = new OrbitControls(camera, renderer.domElement);
 
-scene.add(new THREE.GridHelper(10, 10));
+scene.add(new THREE.GridHelper(20, 20));
 
-// tetrahedron
-var h = 1.3333333432674408;
-var pyramidGeom = new THREE.ConeBufferGeometry(Math.sqrt(2/3), h, 3);
-pyramidGeom.translate(0, h * 0.5, 0);
+// New York
+////////////////////
+var h = 0.5
+var NYGeom = new THREE.ConeBufferGeometry(0.5,h ,8);
+NYGeom.translate(0, h * 0.5, 0);
+var NYMat = new THREE.MeshBasicMaterial({color: "blue"});
+var NYcone = new THREE.Mesh(NYGeom, NYMat);
 
-var pyramidMat = new THREE.MeshBasicMaterial({color: "blue"});
-
-var pyramid = new THREE.Mesh(pyramidGeom, pyramidMat);
-scene.add(pyramid);
+scene.add(NYcone);
 
 // edges
-var pyramidEdges = new THREE.EdgesGeometry(pyramidGeom);
-var edges = new THREE.LineSegments(pyramidEdges, new THREE.LineBasicMaterial({color: "red"}));
-pyramid.add(edges);
+var NYEdgesGeom = new THREE.EdgesGeometry(NYGeom);
+var NYedges = new THREE.LineSegments(NYEdgesGeom, new THREE.LineBasicMaterial({color: "red"}));
+NYcone.add(NYedges);
+
+/////////////////////////
+// Kyiv
+
+var h = 0.5
+var KGeom = new THREE.ConeBufferGeometry(0.5,h ,8);
+KGeom.translate(2, h * 0.5, 0);
+var KMat = new THREE.MeshBasicMaterial({color: "green"});
+var Kcone = new THREE.Mesh(KGeom, KMat);
+
+scene.add(Kcone);
+
+// edges
+var KEdgesGeom = new THREE.EdgesGeometry(KGeom);
+var Kedges = new THREE.LineSegments(KEdgesGeom, new THREE.LineBasicMaterial({color: "orange"}));
+Kcone.add(Kedges);
+
+
+
+///////////
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -54,7 +76,8 @@ document.addEventListener("pointermove", event => {
 
 document.addEventListener("pointerdown", () => {
 		console.log("HELLO")
-		var intersects = raycaster.intersectObjects([pyramid]);
+		var intersects = raycaster.intersectObjects([NYcone, Kcone]);
+		console.log(intersects)
       if (intersects.length > 0) {
 			controls.enabled = false;
 			pIntersect.copy(intersects[0].point);
