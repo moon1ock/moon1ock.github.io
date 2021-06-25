@@ -84,17 +84,12 @@ function setRaycaster(event) {
   raycaster.setFromCamera(mouse, camera);
 }
 
-// function getMouse(event) {
-//   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-//   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-// }
-
 function getMouse(event) {
-	event.preventDefault();
-	var rect = container.getBoundingClientRect();
-   mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-	mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
+
+
 render();
 
 function render() {
