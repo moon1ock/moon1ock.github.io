@@ -3,8 +3,7 @@ import * as THREE from '/node_modules/three';
 // import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
 import {OrbitControls} from '/node_modules/three/examples/jsm/controls/OrbitControls';
 
-import * as dat from 'dat.gui'
-import { SkeletonHelper } from 'three';
+import * as dat from '/node_modules/dat.gui'
 
 // import { GridHelperCustom } from './Grid'
 
