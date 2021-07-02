@@ -1,7 +1,7 @@
 // import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
-import* as THREE from 'three';
+import * as THREE from '/node_modules/three';
 // import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+import {OrbitControls} from '/node_modules/three/examples/jsm/controls/OrbitControls';
 
 import * as dat from 'dat.gui'
 import { SkeletonHelper } from 'three';
