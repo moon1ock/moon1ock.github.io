@@ -24,7 +24,29 @@ function sleep(milliseconds) {
 	  currentDate = Date.now();
 	} while (currentDate - date < milliseconds);
  }
-sleep(100);
+
+
+ // const gui = new dat.GUI()
+const world = {
+  grid : {
+    size: 80,
+    cells: 90,
+  }
+}
+
+// function generatePlane(){
+// 	scene.remove(scene.getObjectByName("Grid"));
+// 	var grid = new THREE.GridHelper(world.grid.size, world.grid.cells)
+// 	grid.name = 'Grid';
+// 	scene.add(grid);
+// }
+// gui.add(world.grid, 'size', 4,150).onChange(() => {
+// 	generatePlane()
+// })
+// gui.add(world.grid, 'cells', 4,700).onChange(() => {
+// 	generatePlane()
+// })
+
 
 
 /////////////////// Scene //////////////////
