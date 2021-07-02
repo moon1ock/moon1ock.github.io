@@ -1,17 +1,15 @@
-// import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
-import * as THREE from '/node_modules/three';
-// import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import {OrbitControls} from '/node_modules/three/examples/jsm/controls/OrbitControls';
+import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+// import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
 
-import * as dat from '/node_modules/dat.gui'
+import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
+// import {OrbitControls} from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js/examples/jsm/controls/OrbitControls';
 
-// import { GridHelperCustom } from './Grid'
-
-
+// import * as dat from '/node_modules/dat.gui'
+// import * as dat from 'https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js'
 
 
 /////////////// GUI ////////////////
-const gui = new dat.GUI()
+
 const world = {
   grid : {
     size: 80,
@@ -19,18 +17,14 @@ const world = {
   }
 }
 
-function generatePlane(){
-	scene.remove(scene.getObjectByName("Grid"));
-	var grid = new THREE.GridHelper(world.grid.size, world.grid.cells)
-	grid.name = 'Grid';
-	scene.add(grid);
-}
-gui.add(world.grid, 'size', 4,150).onChange(() => {
-	generatePlane()
-})
-gui.add(world.grid, 'cells', 4,700).onChange(() => {
-	generatePlane()
-})
+function sleep(milliseconds) {
+	const date = Date.now();
+	let currentDate = null;
+	do {
+	  currentDate = Date.now();
+	} while (currentDate - date < milliseconds);
+ }
+sleep(100);
 
 
 /////////////////// Scene //////////////////
@@ -145,13 +139,7 @@ function getDistance(){
 
 let latest = 0;
 
-function sleep(milliseconds) {
-	const date = Date.now();
-	let currentDate = null;
-	do {
-	  currentDate = Date.now();
-	} while (currentDate - date < milliseconds);
- }
+
 sleep(100);
 document.addEventListener("pointermove", event => {
 
