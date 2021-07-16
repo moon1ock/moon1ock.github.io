@@ -15,6 +15,7 @@ import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
 
 
+// import * as dat from './dat.gui'
 /////////////////
 
 var Stats = function () {
@@ -183,6 +184,8 @@ Stats.Panel = function ( name, fg, bg ) {
 
 };
 
+
+
 //////////////////
 
 // Create a Scene and Set Up Camera
@@ -197,7 +200,7 @@ camera.position.set(0,75,200);
 camera.lookAt(scene.position);
 
 var stats = new Stats();
-stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+stats.showPanel( 2 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild( stats.dom );
 
 
@@ -220,28 +223,37 @@ THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 const controls = new OrbitControls( camera, renderer.domElement );
 
 
-// Floor
-
-// var floorTexture = new THREE.TextureLoader().load('./img/checkerboard.jpg')
-// floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-// floorTexture.repeat.set( 10, 10 );
-// var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-// var floorGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
-// var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-// floor.position.y = -0.5;
-// floor.position.y = -54;
-
-// floor.rotation.x = Math.PI / 2;
-// scene.add(floor);
+///////////////// GUI  ///////
 
 
-// SKYBOX/FOG
-// var skyBoxGeometry = new THREE.BoxGeometry( 10000, 10000, 10000 );
-// var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-// var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-//   skyBox.flipSided = true; // render faces from inside of the cube, instead of from outside (default).
-// // scene.add(skyBox);
-// scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+const gui = new dat.GUI()
+const world = {
+	wireframe: true,
+	globe: false,
+	stars: false
+}
+var top = gui.addFolder('Basic Config');
+
+var wireGUI = top.add( world, 'wireframe' ).name("Show Wireframe").listen();
+wireGUI.onChange( function(value) { 
+	if (value) scene.add(wireframe)
+	else scene.remove(wireframe)
+});
+
+
+var starsGUI = top.add( world, 'stars' ).name("Show Stars").listen();
+starsGUI.onChange( function(value) { 
+	if (value) scene.add(stars)
+	else scene.remove(stars)
+});
+top.open()
+
+var globeGUI = top.add( world, 'globe' ).name("Show Globe").listen();
+globeGUI.onChange( function(value) { 
+	if (value) scene.add(sphere)
+	else scene.remove(sphere)
+});
+top.open()
 
 
 
@@ -249,16 +261,16 @@ const controls = new OrbitControls( camera, renderer.domElement );
 // camera.position.set(50,50,50);
 
 
-// Just Globe
-// const sphere = new THREE.Mesh(
-//   new THREE.SphereGeometry(30,50,50),
-//   new THREE.MeshBasicMaterial({
-//     // color:0xFF0000
-//     map: new THREE.TextureLoader().load('./img/globe.jpg')
-//   })
-// )
-// sphere.position.set(-75, 0, 0);
-// scene.add(sphere)
+
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(30,50,50),
+  new THREE.MeshBasicMaterial({
+    // color:0xFF0000
+    map: new THREE.TextureLoader().load('./img/globe.jpg')
+  })
+)
+sphere.position.set(0,0,0);
+
 
 // Just WireFrame
 
@@ -268,66 +280,46 @@ const wireframe = new THREE.Mesh(
   new THREE.MeshBasicMaterial({
       color: 0xAAAAAA,
       wireframe: true,
-      transparent: true
+      transparent: true,
+		opacity: 0.15
   })
 )
 wireframe.position.set(0, 0, 0);
 scene.add(wireframe)
 
 
-// Globe with WireFrame over it and glow over it
-// var globe_geom = new THREE.SphereGeometry(50,32,16);
-// var globe_geom = new THREE.SphereGeometry(30,50,16);
 
-// const globe_1 = new THREE.Mesh(
-//   globe_geom,
-//   new THREE.MeshBasicMaterial({
-//       map: new THREE.TextureLoader().load('./img/globe.jpg'),
-//   })
-// )
-// globe_1.position.set(75, 0, 0);
-// scene.add(globe_1)
 
-// const wire_1 = new THREE.Mesh(
-//   new THREE.SphereGeometry(30,50,50),
-//   new THREE.MeshBasicMaterial({
-//     color: 0xCCCCCC,
-//     wireframe: true,
-//     transparent: true
-//   })
-// )
-// wire_1.position.set(75, 0, 0);
-// scene.add(wire_1)
+//// Stars ////
 
-// var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xadd8e6, side: THREE.BackSide } );
-// var outlineMesh1 = new THREE.Mesh( globe_geom, outlineMaterial1 );
-// outlineMesh1.position.set(75, 0, 0)
-// outlineMesh1.scale.multiplyScalar(1.05);
-// scene.add( outlineMesh1 );
+var stars;
+function genStars(){
+	const starGeometry = new THREE.BufferGeometry()
+	const starMaterial = new THREE.PointsMaterial({
+		color: 0xffffff
+	})
+
+	const starVerticies = []
+
+	for (let i = 0; i<100000; i++){
+		const x = (Math.random() -0.5)*2000
+		const y = (Math.random() -0.5)*2000
+		const z = (Math.random()-0.5)*2000
+		starVerticies.push(x,y,z)
+	}
+	starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVerticies, 3))
+	stars = new THREE.Points(starGeometry, starMaterial)
+}
+genStars()
 
 
 
 
-// Stars
-// const starGeometry = new THREE.BufferGeometry()
-// const starMaterial = new THREE.PointsMaterial({
-//   color: 0xffffff
-// })
 
-// const starVerticies = []
-// for (let i = 0; i<1000; i++){
-//   const x = (Math.random() -0.5)*2000
-//   const y = (Math.random() -0.5)*2000
-//   const z = Math.random()*2000
-//   starVerticies.push(x,y,z)
-// }
-// starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVerticies, 3))
-// const stars = new THREE.Points(starGeometry, starMaterial)
-// scene.add(stars)
+
 
 
 // Overlaying points on the globe
-
 const point = new THREE.Mesh(
   new THREE.SphereBufferGeometry(0.5,21,21),
   new THREE.MeshBasicMaterial({
@@ -337,10 +329,14 @@ const point = new THREE.Mesh(
 point.position.z = 30
 scene.add(point)
 
-
-
-
-
+const noint = new THREE.Mesh(
+	new THREE.SphereBufferGeometry(0.5,21,21),
+	new THREE.MeshBasicMaterial({
+	  color: '#ff0000'
+	})
+ )
+ noint.position.x = 30
+ scene.add(noint)
 
 
 // Raycaster
@@ -366,16 +362,7 @@ document.addEventListener("pointermove", event => {
 		raycaster.setFromCamera(mouse, camera);
 
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
-		var dist = Math.sqrt(planeIntersect.x*planeIntersect.x+planeIntersect.y*planeIntersect.y+planeIntersect.z*planeIntersect.z) - 30;
-		
-		// shift.subVectors(planeIntersect, dragObject.position );
-
-
-		// I need to move the center of dragObject to the exact point of planeIntersect
-
-		console.log(dragObject.position, planeIntersect, dist);
       dragObject.position.addVectors(planeIntersect, shift);
-      // dragObject.position.set(planeIntersect);
 
     }
  }
@@ -388,7 +375,7 @@ document.addEventListener("pointerdown", () => {
 
 
 	raycaster.setFromCamera(mouse, camera);
-	var intersects = raycaster.intersectObjects([point]);
+	var intersects = raycaster.intersectObjects([point, noint]);
 	raycaster.ray.intersectSphere(sphereInter, planeIntersect);
 
     if (intersects.length > 0) {
