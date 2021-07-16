@@ -1,16 +1,18 @@
-import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
-// import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
-
-import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-// import {OrbitControls} from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js/examples/jsm/controls/OrbitControls';
 // import * as THREE from 'three'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import * as Stats from 'stats.js'
 
+// import * as THREE from 'three'
+// import { Float32BufferAttribute } from 'three';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 
 
 
+import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+// import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
+
+import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
 
 
 /////////////////
@@ -259,8 +261,10 @@ sphere.position.set(-75, 0, 0);
 scene.add(sphere)
 
 // Just WireFrame
+
+
 const wireframe = new THREE.Mesh(
-  new THREE.SphereGeometry(30,50,30),
+	new THREE.SphereGeometry(30,50,30),
   new THREE.MeshBasicMaterial({
       color: 0xAAAAAA,
       wireframe: true,
@@ -344,9 +348,10 @@ scene.add(point)
 var raycaster = new THREE.Raycaster();
 // raycaster.far = 500
 
-console.log(raycaster)
+
 var mouse = new THREE.Vector2();
 var plane = new THREE.Plane();
+var sphereInter = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
 var pNormal = new THREE.Vector3(0, 1, 0); // plane's normal
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
 var pIntersect = new THREE.Vector3(); // point of intersection with an object (plane's point)
@@ -363,7 +368,16 @@ document.addEventListener("pointermove", event => {
 	
 
     if (isDragging) {
-    	raycaster.ray.intersectPlane(plane, planeIntersect);
+
+
+		// raycaster.ray.intersectSphere(wiresphere, planeIntersect);
+
+
+    	// raycaster.ray.intersectPlane(plane, planeIntersect);
+		// console.log(planeIntersect)
+		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
+
+
       dragObject.position.addVectors(planeIntersect, shift);
     }
  }
@@ -374,18 +388,19 @@ document.addEventListener("pointermove", event => {
 
 document.addEventListener("pointerdown", () => {
 
+
+
 	var intersects = raycaster.intersectObjects([point]);
 
-    console.log(intersects)
     if (intersects.length > 0) {
-    controls.enabled = false;
-    pIntersect.copy(intersects[0].point);
-    plane.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
-    shift.subVectors(intersects[0].object.position, intersects[0].point);
-    isDragging = true;
-    dragObject = intersects[0].object;
+		controls.enabled = false;
+		pIntersect.copy(intersects[0].point);
+		plane.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
+		shift.subVectors(intersects[0].object.position, intersects[0].point);
+		isDragging = true;
+		dragObject = intersects[0].object;
 
-  }
+	}
 } );
 
 document.addEventListener("pointerup", () => {
