@@ -222,17 +222,17 @@ const controls = new OrbitControls( camera, renderer.domElement );
 
 // Floor
 
-var floorTexture = new THREE.TextureLoader().load('./img/checkerboard.jpg')
-floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-floorTexture.repeat.set( 10, 10 );
-var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-var floorGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
-var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-floor.position.y = -0.5;
-floor.position.y = -54;
+// var floorTexture = new THREE.TextureLoader().load('./img/checkerboard.jpg')
+// floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+// floorTexture.repeat.set( 10, 10 );
+// var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+// var floorGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
+// var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+// floor.position.y = -0.5;
+// floor.position.y = -54;
 
-floor.rotation.x = Math.PI / 2;
-scene.add(floor);
+// floor.rotation.x = Math.PI / 2;
+// scene.add(floor);
 
 
 // SKYBOX/FOG
@@ -250,15 +250,15 @@ scene.add(floor);
 
 
 // Just Globe
-const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(30,50,50),
-  new THREE.MeshBasicMaterial({
-    // color:0xFF0000
-    map: new THREE.TextureLoader().load('./img/globe.jpg')
-  })
-)
-sphere.position.set(-75, 0, 0);
-scene.add(sphere)
+// const sphere = new THREE.Mesh(
+//   new THREE.SphereGeometry(30,50,50),
+//   new THREE.MeshBasicMaterial({
+//     // color:0xFF0000
+//     map: new THREE.TextureLoader().load('./img/globe.jpg')
+//   })
+// )
+// sphere.position.set(-75, 0, 0);
+// scene.add(sphere)
 
 // Just WireFrame
 
@@ -277,33 +277,33 @@ scene.add(wireframe)
 
 // Globe with WireFrame over it and glow over it
 // var globe_geom = new THREE.SphereGeometry(50,32,16);
-var globe_geom = new THREE.SphereGeometry(30,50,16);
+// var globe_geom = new THREE.SphereGeometry(30,50,16);
 
-const globe_1 = new THREE.Mesh(
-  globe_geom,
-  new THREE.MeshBasicMaterial({
-      map: new THREE.TextureLoader().load('./img/globe.jpg'),
-  })
-)
-globe_1.position.set(75, 0, 0);
-scene.add(globe_1)
+// const globe_1 = new THREE.Mesh(
+//   globe_geom,
+//   new THREE.MeshBasicMaterial({
+//       map: new THREE.TextureLoader().load('./img/globe.jpg'),
+//   })
+// )
+// globe_1.position.set(75, 0, 0);
+// scene.add(globe_1)
 
-const wire_1 = new THREE.Mesh(
-  new THREE.SphereGeometry(30,50,50),
-  new THREE.MeshBasicMaterial({
-    color: 0xCCCCCC,
-    wireframe: true,
-    transparent: true
-  })
-)
-wire_1.position.set(75, 0, 0);
-scene.add(wire_1)
+// const wire_1 = new THREE.Mesh(
+//   new THREE.SphereGeometry(30,50,50),
+//   new THREE.MeshBasicMaterial({
+//     color: 0xCCCCCC,
+//     wireframe: true,
+//     transparent: true
+//   })
+// )
+// wire_1.position.set(75, 0, 0);
+// scene.add(wire_1)
 
-var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xadd8e6, side: THREE.BackSide } );
-var outlineMesh1 = new THREE.Mesh( globe_geom, outlineMaterial1 );
-outlineMesh1.position.set(75, 0, 0)
-outlineMesh1.scale.multiplyScalar(1.05);
-scene.add( outlineMesh1 );
+// var outlineMaterial1 = new THREE.MeshBasicMaterial( { color: 0xadd8e6, side: THREE.BackSide } );
+// var outlineMesh1 = new THREE.Mesh( globe_geom, outlineMaterial1 );
+// outlineMesh1.position.set(75, 0, 0)
+// outlineMesh1.scale.multiplyScalar(1.05);
+// scene.add( outlineMesh1 );
 
 
 
@@ -329,7 +329,7 @@ scene.add( outlineMesh1 );
 // Overlaying points on the globe
 
 const point = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(1,50,50),
+  new THREE.SphereBufferGeometry(0.5,21,21),
   new THREE.MeshBasicMaterial({
     color: '#ff0000'
   })
@@ -364,21 +364,18 @@ document.addEventListener("pointermove", event => {
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-	raycaster.setFromCamera(mouse, camera);
-	
 
     if (isDragging) {
-
-
+		raycaster.setFromCamera(mouse, camera);
 		// raycaster.ray.intersectSphere(wiresphere, planeIntersect);
-
-
     	// raycaster.ray.intersectPlane(plane, planeIntersect);
 		// console.log(planeIntersect)
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
 
-
       dragObject.position.addVectors(planeIntersect, shift);
+
+		// dragObject.position.x = planeIntersect.x
+
     }
  }
 );
@@ -389,14 +386,17 @@ document.addEventListener("pointermove", event => {
 document.addEventListener("pointerdown", () => {
 
 
-
+	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects([point]);
 
     if (intersects.length > 0) {
 		controls.enabled = false;
 		pIntersect.copy(intersects[0].point);
-		plane.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
+		// sphereInter.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
+		console.log(intersects[0].object.position, intersects[0].point)
 		shift.subVectors(intersects[0].object.position, intersects[0].point);
+		console.log(shift)
+		
 		isDragging = true;
 		dragObject = intersects[0].object;
 
