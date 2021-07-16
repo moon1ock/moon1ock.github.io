@@ -350,11 +350,8 @@ var raycaster = new THREE.Raycaster();
 
 
 var mouse = new THREE.Vector2();
-var plane = new THREE.Plane();
 var sphereInter = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
-var pNormal = new THREE.Vector3(0, 1, 0); // plane's normal
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
-var pIntersect = new THREE.Vector3(); // point of intersection with an object (plane's point)
 var shift = new THREE.Vector3(); // distance between position of an object and points of intersection with the object
 var isDragging = false;
 var dragObject;
@@ -367,14 +364,18 @@ document.addEventListener("pointermove", event => {
 
     if (isDragging) {
 		raycaster.setFromCamera(mouse, camera);
-		// raycaster.ray.intersectSphere(wiresphere, planeIntersect);
-    	// raycaster.ray.intersectPlane(plane, planeIntersect);
-		// console.log(planeIntersect)
+
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
+		var dist = Math.sqrt(planeIntersect.x*planeIntersect.x+planeIntersect.y*planeIntersect.y+planeIntersect.z*planeIntersect.z) - 30;
+		
+		// shift.subVectors(planeIntersect, dragObject.position );
 
+
+		// I need to move the center of dragObject to the exact point of planeIntersect
+
+		console.log(dragObject.position, planeIntersect, dist);
       dragObject.position.addVectors(planeIntersect, shift);
-
-		// dragObject.position.x = planeIntersect.x
+      // dragObject.position.set(planeIntersect);
 
     }
  }
@@ -388,15 +389,11 @@ document.addEventListener("pointerdown", () => {
 
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects([point]);
+	raycaster.ray.intersectSphere(sphereInter, planeIntersect);
 
     if (intersects.length > 0) {
 		controls.enabled = false;
-		pIntersect.copy(intersects[0].point);
-		// sphereInter.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
-		console.log(intersects[0].object.position, intersects[0].point)
-		shift.subVectors(intersects[0].object.position, intersects[0].point);
-		console.log(shift)
-		
+		// shift.subVectors(planeIntersect, intersects[0].object.position );
 		isDragging = true;
 		dragObject = intersects[0].object;
 
