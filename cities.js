@@ -230,8 +230,8 @@ controls.enablePan = false;
 const gui = new dat.GUI()
 const world = {
 	wireframe: true,
-	globe: false,
-	stars: false
+	globe: true,
+	stars: true
 }
 var top = gui.addFolder('Basic Config');
 
@@ -267,18 +267,19 @@ const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(30,50,50),
   new THREE.MeshBasicMaterial({
     // color:0xFF0000
-    map: new THREE.TextureLoader().load('./img/globe.jpg')
+    map: new THREE.TextureLoader().load('./img/globe.jpg'),
+	normalMap:new THREE.TextureLoader().load('./img/globe.jpg')
   })
 )
 sphere.position.set(0,0,0);
-
+scene.add(sphere)
 
 // Just WireFrame
 
 
 const wireframe = new THREE.Mesh(
 	new THREE.SphereGeometry(30,50,30),
-  new THREE.MeshBasicMaterial({
+  	new THREE.MeshBasicMaterial({
       color: 0xAAAAAA,
       wireframe: true,
       transparent: true,
@@ -315,9 +316,12 @@ function genStars(){
 	stars = new THREE.Points(starGeometry, starMaterial)
 }
 genStars()
+scene.add(stars)
 
+// Add background
 
-
+// const spaceTexture = new THREE.TextureLoader().load('img/space.jpg');
+// scene.background = spaceTexture;
 
 ////// CITIES ///////
 // Overlaying points on the globe
@@ -349,7 +353,7 @@ scene.add(noint)
 
 ////////////////////////////////////////
 
-var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:0, g:0, b:255, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
 pt_lbl.position.set(0,0,30);
 scene.add( pt_lbl );
 var n_lbl = makeTextSprite( "B", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
@@ -393,7 +397,7 @@ function makeTextSprite( message, parameters )
 								  + borderColor.b + "," + borderColor.a + ")";
 
 	context.lineWidth = borderThickness;
-	roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+	roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 6);
 	// 1.4 is extra height factor for text below baseline: g,j,p,q.
 	
 	// text color
