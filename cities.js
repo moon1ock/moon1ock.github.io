@@ -318,10 +318,7 @@ genStars()
 
 
 
-
-
-
-
+////// CITIES ///////
 // Overlaying points on the globe
 const point = new THREE.Mesh(
   new THREE.SphereBufferGeometry(0.5,21,21),
@@ -331,20 +328,16 @@ const point = new THREE.Mesh(
 )
 point.position.z = 30
 scene.add(point)
-
 const noint = new THREE.Mesh(
 	new THREE.SphereBufferGeometry(0.25,21,21),
 	new THREE.MeshBasicMaterial({
 	  color: '#ff0000'
 	})
  )
- noint.position.x = 30
- scene.add(noint)
+noint.position.x = 30
+scene.add(noint)
 
-
-
-
- 
+///////////////////////
 // Raycaster
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
