@@ -221,6 +221,7 @@ THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 
 // CONTROLS
 const controls = new OrbitControls( camera, renderer.domElement );
+controls.enablePan = false;
 
 
 ///////////////// GUI  ///////
