@@ -330,7 +330,7 @@ point.position.z = 30
 scene.add(point)
 
 const noint = new THREE.Mesh(
-	new THREE.SphereBufferGeometry(0.5,21,21),
+	new THREE.SphereBufferGeometry(0.25,21,21),
 	new THREE.MeshBasicMaterial({
 	  color: '#ff0000'
 	})
@@ -339,12 +339,11 @@ const noint = new THREE.Mesh(
  scene.add(noint)
 
 
+
+
+ 
 // Raycaster
-
 var raycaster = new THREE.Raycaster();
-// raycaster.far = 500
-
-
 var mouse = new THREE.Vector2();
 var sphereInter = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
@@ -360,11 +359,9 @@ document.addEventListener("pointermove", event => {
 
     if (isDragging) {
 		raycaster.setFromCamera(mouse, camera);
-
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
-      dragObject.position.addVectors(planeIntersect, shift);
-
-    }
+      	dragObject.position.addVectors(planeIntersect, shift);
+		}
  }
 );
 
@@ -373,14 +370,15 @@ document.addEventListener("pointermove", event => {
 
 document.addEventListener("pointerdown", () => {
 
-
 	raycaster.setFromCamera(mouse, camera);
-	var intersects = raycaster.intersectObjects([point, noint]);
+	var intersects = raycaster.intersectObjects([point, noint, sphere]);
+	
+	// check if the shpere is intersected before the points are, and return in this case
+	if (intersects.length > 0 && intersects[0].object == sphere) return
 	raycaster.ray.intersectSphere(sphereInter, planeIntersect);
-
-    if (intersects.length > 0) {
+    
+	if (intersects.length > 0) {
 		controls.enabled = false;
-		// shift.subVectors(planeIntersect, intersects[0].object.position );
 		isDragging = true;
 		dragObject = intersects[0].object;
 
