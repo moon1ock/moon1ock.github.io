@@ -249,7 +249,7 @@ starsGUI.onChange( function(value) {
 top.open()
 
 var globeGUI = top.add( world, 'globe' ).name("Show Globe").listen();
-globeGUI.onChange( function(value) { 
+globeGUI.onChange( function(value) {
 	if (value) scene.add(sphere)
 	else scene.remove(sphere)
 });
@@ -292,6 +292,7 @@ scene.add(wireframe)
 
 //// Stars ////
 
+
 var stars;
 function genStars(){
 	const starGeometry = new THREE.BufferGeometry()
@@ -301,12 +302,14 @@ function genStars(){
 
 	const starVerticies = []
 
-	for (let i = 0; i<100000; i++){
-		const x = (Math.random() -0.5)*2000
-		const y = (Math.random() -0.5)*2000
-		const z = (Math.random()-0.5)*2000
-		starVerticies.push(x,y,z)
+	for (let i = 0; i<50000; i++){
+		const x = (Math.random() -0.5)*1000
+		const y =  (Math.random() -0.5)*1000
+		const z = (Math.random()-0.5)*1000
+
+		if(x*x+y*y+z*z > 120000) starVerticies.push(x,y,z);
 	}
+
 	starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVerticies, 3))
 	stars = new THREE.Points(starGeometry, starMaterial)
 }
@@ -398,6 +401,9 @@ function animate(){
   requestAnimationFrame(animate)
   renderer.render(scene, camera)
   stats.update();
+
+	stars.rotation.x+=0.0001
+	stars.rotation.y+=0.0001
 
 }
 animate()
