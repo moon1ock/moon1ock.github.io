@@ -352,6 +352,11 @@ scene.add(noint)
 var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
 pt_lbl.position.set(0,0,30);
 scene.add( pt_lbl );
+var n_lbl = makeTextSprite( "B", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+n_lbl.position.set(30,0,0);
+scene.add( n_lbl );
+
+
 
 function makeTextSprite( message, parameters )
 {
@@ -453,9 +458,11 @@ document.addEventListener("pointermove", event => {
       	dragObject.position.addVectors(planeIntersect, shift);
 		if (dragObject == point){
 			pt_lbl.position.set(point.position.x,point.position.y,point.position.z)
-
 		}
+		else if(dragObject == noint){
+			n_lbl.position.set(noint.position.x,noint.position.y,noint.position.z)
 		}
+	}
  }
 );
 
