@@ -321,12 +321,11 @@ genStars()
 ////// CITIES ///////
 // Overlaying points on the globe
 const point = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(0.5,21,21),
+  new THREE.SphereBufferGeometry(0.25,21,21),
   new THREE.MeshBasicMaterial({
     color: '#ff0000'
   })
 )
-point.name = "A"
 point.position.z = 30
 scene.add(point)
 const noint = new THREE.Mesh(
@@ -349,12 +348,9 @@ scene.add(noint)
 
 ////////////////////////////////////////
 
-var spritey = makeTextSprite( " Hello, ", { fontsize: 50, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
-spritey.position.set(0,0,30);
-scene.add( spritey );
-
-
-
+var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+pt_lbl.position.set(0,0,30);
+scene.add( pt_lbl );
 
 function makeTextSprite( message, parameters )
 {
@@ -405,7 +401,7 @@ function makeTextSprite( message, parameters )
 
 	var spriteMaterial = new THREE.SpriteMaterial( { map: texture, } );
 	var sprite = new THREE.Sprite( spriteMaterial );
-	sprite.scale.set(5,2,1.0);
+	sprite.scale.set(5,2,6.0);
 	spriteMaterial.depthTest = false;
 
 	return sprite;	
@@ -430,16 +426,7 @@ function roundRect(ctx, x, y, w, h, r)
 }
 
 
-
-
-
-
 ////////////////////////////////////////////////
-
-
-
-
-
 
 
 
@@ -463,6 +450,10 @@ document.addEventListener("pointermove", event => {
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
       	dragObject.position.addVectors(planeIntersect, shift);
+		if (dragObject == point){
+			pt_lbl.position.set(point.position.x,point.position.y,point.position.z)
+
+		}
 		}
  }
 );
