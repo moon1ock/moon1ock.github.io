@@ -454,7 +454,7 @@ function roundRect(ctx, x, y, w, h, r)
 var base = new THREE.Vector3();
 var dest = new THREE.Vector3();
 var points = [];
-
+var mid = new THREE.Vector3();
 var curve_geom;
 var curve_material;
 var path;
@@ -473,19 +473,32 @@ function drawCurves(dragObject){
 		}
 	}
 
-	base = new THREE.Vector3(cities[idx].position.x, cities[idx].position.y,cities[idx].position.z)
+	base.set(cities[idx].position.x, cities[idx].position.y,cities[idx].position.z)
 
 	for (let i=0;i<cities.length; i++){
 		if (i == idx){continue}
 
-		dest = new THREE.Vector3(cities[i].position.x,cities[i].position.y,cities[i].position.z)
+		dest.set(cities[i].position.x,cities[i].position.y,cities[i].position.z)
 
-		points = [base]
-
-		// find midpoints
-		for (let i =0; i<=1; i++){
-			// let p = new THREE.Vector3().lerpVectors(base,dest,i/25);
-			let p = new THREE.Vector3().addVectors(dest,base);
+		points = []
+		// use midpoint for better interpolation
+		mid.addVectors(dest,base);
+		mid.multiplyScalar(0.5);
+		mid.normalize()
+		mid.multiplyScalar(30);
+		
+		// interpolate base-> mid
+		for (let i =0; i<=20; i++){
+			let p = new THREE.Vector3().lerpVectors(base,mid,i/20);
+			p.multiplyScalar(0.5)
+			p.normalize()
+			p.multiplyScalar(30)
+			points.push(p);
+			
+		}
+		
+		for (let i =0; i<=20; i++){
+			let p = new THREE.Vector3().lerpVectors(mid,dest,i/20);
 			p.multiplyScalar(0.5)
 			p.normalize()
 			p.multiplyScalar(30)
@@ -493,16 +506,6 @@ function drawCurves(dragObject){
 			
 		}
 		points.push(dest)
-		// for (let i =0; i<=25; i++){
-		// 	// let p = new THREE.Vector3().lerpVectors(base,dest,i/25);
-		// 	let p = new THREE.Vector3().addVectors(dest,base);
-		// 	p.multiplyScalar(0.5)
-		// 	p.normalize()
-		// 	p.multiplyScalar(30)
-		// 	points.push(p);
-			
-		// }
-		
 		console.log(points)
 		// todo: clear trash!!!!!
 		path = new THREE.CatmullRomCurve3(points);
