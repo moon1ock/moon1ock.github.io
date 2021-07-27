@@ -352,6 +352,14 @@ const doint = new THREE.Mesh(
 scene.add(doint)
 
 
+const zoint = new THREE.Mesh(
+	new THREE.SphereBufferGeometry(0.25,21,21),
+	new THREE.MeshBasicMaterial({
+	  color: '#ff0000'
+	})
+ )
+ zoint.position.y = -30
+scene.add(zoint)
 
 
 
@@ -370,7 +378,9 @@ scene.add( n_lbl );
 var d_lbl = makeTextSprite( "C", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
 d_lbl.position.set(-30,0,0);
 scene.add( d_lbl );
-
+var z_lbl = makeTextSprite( "z", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+z_lbl.position.set(0,-30,0);
+scene.add( z_lbl );
 
 
 function makeTextSprite( message, parameters )
@@ -460,7 +470,7 @@ var curve_material;
 var path;
 var curve_mesh;
 var curve_meshes = [];
-var cities = [point, noint, doint]
+var cities = [point, noint, doint,zoint]
 
 function drawCurves(dragObject){
 	clearCurves()
@@ -585,6 +595,9 @@ document.addEventListener("pointermove", event => {
 		else if(dragObject == doint){
 			d_lbl.position.set(doint.position.x,doint.position.y,doint.position.z)
 		}
+		else if(dragObject == zoint){
+			z_lbl.position.set(zoint.position.x,zoint.position.y,zoint.position.z)
+		}
 	}
  }
 );
@@ -595,7 +608,7 @@ document.addEventListener("pointermove", event => {
 document.addEventListener("pointerdown", () => {
 
 	raycaster.setFromCamera(mouse, camera);
-	var intersects = raycaster.intersectObjects([point, noint,doint, sphere]);
+	var intersects = raycaster.intersectObjects([point, noint,doint,zoint, sphere]);
 	
 	// check if the shpere is intersected before the points are, and return in this case
 	if (intersects.length > 0 && intersects[0].object == sphere) return
