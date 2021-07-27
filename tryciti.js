@@ -264,7 +264,7 @@ top.open()
 
 
 const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(30,50,50),
+  new THREE.SphereGeometry(1,50,50),
   new THREE.MeshBasicMaterial({
     // color:0xFF0000
     map: new THREE.TextureLoader().load('./img/globe.jpg'),
@@ -277,7 +277,7 @@ scene.add(sphere)
 
 
 const wireframe = new THREE.Mesh(
-	new THREE.SphereGeometry(30,50,30),
+	new THREE.SphereGeometry(1,50,30),
   	new THREE.MeshBasicMaterial({
       color: 0xAAAAAA,
       wireframe: true,
@@ -325,30 +325,30 @@ scene.add(stars)
 ////// CITIES ///////
 // Overlaying points on the globe
 const point = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(0.25,21,21),
+  new THREE.SphereBufferGeometry(0.025,21,21),
   new THREE.MeshBasicMaterial({
     color: '#ff0000'
   })
 )
-point.position.z = 30
+point.position.z = 1
 scene.add(point)
 
 const noint = new THREE.Mesh(
-	new THREE.SphereBufferGeometry(0.25,21,21),
+	new THREE.SphereBufferGeometry(0.025,21,21),
 	new THREE.MeshBasicMaterial({
 	  color: '#ff0000'
 	})
  )
-noint.position.x = 30
+noint.position.x = 1
 scene.add(noint)
 
 const doint = new THREE.Mesh(
-	new THREE.SphereBufferGeometry(0.25,21,21),
+	new THREE.SphereBufferGeometry(0.025,21,21),
 	new THREE.MeshBasicMaterial({
 	  color: '#ff0000'
 	})
  )
- doint.position.x = -30
+ doint.position.x = -1
 scene.add(doint)
 
 
@@ -360,91 +360,91 @@ scene.add(doint)
 
 ////////////////////////////////////////
 
-var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
-pt_lbl.position.set(0,0,30);
-scene.add( pt_lbl );
-var n_lbl = makeTextSprite( "B", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
-n_lbl.position.set(30,0,0);
-scene.add( n_lbl );
+// var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
+// pt_lbl.position.set(0,0,30);
+// scene.add( pt_lbl );
+// var n_lbl = makeTextSprite( "B", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+// n_lbl.position.set(30,0,0);
+// scene.add( n_lbl );
 
-var d_lbl = makeTextSprite( "C", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
-d_lbl.position.set(-30,0,0);
-scene.add( d_lbl );
+// var d_lbl = makeTextSprite( "C", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+// d_lbl.position.set(-30,0,0);
+// scene.add( d_lbl );
 
 
 
-function makeTextSprite( message, parameters )
-{
-	if ( parameters === undefined ) parameters = {};
+// function makeTextSprite( message, parameters )
+// {
+// 	if ( parameters === undefined ) parameters = {};
 	
-	var fontface = parameters.hasOwnProperty("fontface") ? 
-		parameters["fontface"] : "Arial";
+// 	var fontface = parameters.hasOwnProperty("fontface") ? 
+// 		parameters["fontface"] : "Arial";
 	
-	var fontsize = parameters.hasOwnProperty("fontsize") ? 
-		parameters["fontsize"] : 18;
+// 	var fontsize = parameters.hasOwnProperty("fontsize") ? 
+// 		parameters["fontsize"] : 18;
 	
-	var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
-		parameters["borderThickness"] : 4;
+// 	var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
+// 		parameters["borderThickness"] : 4;
 	
-	var borderColor = parameters.hasOwnProperty("borderColor") ?
-		parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+// 	var borderColor = parameters.hasOwnProperty("borderColor") ?
+// 		parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
 	
-	var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
-		parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
+// 	var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
+// 		parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
 
-	var canvas = document.createElement('canvas');
-	var context = canvas.getContext('2d');
-	context.font = "Bold " + fontsize + "px " + fontface;
+// 	var canvas = document.createElement('canvas');
+// 	var context = canvas.getContext('2d');
+// 	context.font = "Bold " + fontsize + "px " + fontface;
     
-	// get size data (height depends only on font size)
-	var metrics = context.measureText( message );
-	var textWidth = metrics.width;
+// 	// get size data (height depends only on font size)
+// 	var metrics = context.measureText( message );
+// 	var textWidth = metrics.width;
 	
-	// background color
-	context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
-								  + backgroundColor.b + "," + backgroundColor.a + ")";
-	// border color
-	context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
-								  + borderColor.b + "," + borderColor.a + ")";
+// 	// background color
+// 	context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
+// 								  + backgroundColor.b + "," + backgroundColor.a + ")";
+// 	// border color
+// 	context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
+// 								  + borderColor.b + "," + borderColor.a + ")";
 
-	context.lineWidth = borderThickness;
-	roundRect(context, borderThickness/2+50, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 6);
-	// 1.4 is extra height factor for text below baseline: g,j,p,q.
+// 	context.lineWidth = borderThickness;
+// 	roundRect(context, borderThickness/2+50, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 6);
+// 	// 1.4 is extra height factor for text below baseline: g,j,p,q.
 	
-	// text color
-	context.fillStyle = "rgba(0, 0, 0, 1.0)";
+// 	// text color
+// 	context.fillStyle = "rgba(0, 0, 0, 1.0)";
 
-	context.fillText( message, borderThickness+50, fontsize + borderThickness);
+// 	context.fillText( message, borderThickness+50, fontsize + borderThickness);
 	
-	// canvas contents will be used for a texture
-	var texture = new THREE.Texture(canvas) 
-	texture.needsUpdate = true;
+// 	// canvas contents will be used for a texture
+// 	var texture = new THREE.Texture(canvas) 
+// 	texture.needsUpdate = true;
 
-	var spriteMaterial = new THREE.SpriteMaterial( { map: texture, } );
-	var sprite = new THREE.Sprite( spriteMaterial );
-	sprite.scale.set(5,2,6.0);
-	spriteMaterial.depthTest = false;
+// 	var spriteMaterial = new THREE.SpriteMaterial( { map: texture, } );
+// 	var sprite = new THREE.Sprite( spriteMaterial );
+// 	sprite.scale.set(5,2,6.0);
+// 	spriteMaterial.depthTest = false;
 
-	return sprite;	
-}
+// 	return sprite;	
+// }
 
-// function for drawing rounded rectangles
-function roundRect(ctx, x, y, w, h, r) 
-{
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-    ctx.lineTo(x+w, y+h-r);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-    ctx.lineTo(x+r, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-    ctx.lineTo(x, y+r);
-    ctx.quadraticCurveTo(x, y, x+r, y);
-    ctx.closePath();
-    ctx.fill();
-	ctx.stroke();   
-}
+// // function for drawing rounded rectangles
+// function roundRect(ctx, x, y, w, h, r) 
+// {
+//     ctx.beginPath();
+//     ctx.moveTo(x+r, y);
+//     ctx.lineTo(x+w-r, y);
+//     ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+//     ctx.lineTo(x+w, y+h-r);
+//     ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+//     ctx.lineTo(x+r, y+h);
+//     ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+//     ctx.lineTo(x, y+r);
+//     ctx.quadraticCurveTo(x, y, x+r, y);
+//     ctx.closePath();
+//     ctx.fill();
+// 	ctx.stroke();   
+// }
 
 
 ////////////////////////////////////////////////
@@ -480,34 +480,17 @@ function drawCurves(dragObject){
 
 		dest = new THREE.Vector3(cities[i].position.x,cities[i].position.y,cities[i].position.z)
 
-		points = [base]
-
-		// find midpoints
-		for (let i =0; i<=1; i++){
-			// let p = new THREE.Vector3().lerpVectors(base,dest,i/25);
-			let p = new THREE.Vector3().addVectors(dest,base);
-			p.multiplyScalar(0.5)
+		points = []
+		for (let i =0; i<=35; i++){
+			let p = new THREE.Vector3().lerpVectors(base,dest,i/35);
 			p.normalize()
-			p.multiplyScalar(30)
+			// p.multiplyScalar(30)
 			points.push(p);
 			
 		}
-		points.push(dest)
-		// for (let i =0; i<=25; i++){
-		// 	// let p = new THREE.Vector3().lerpVectors(base,dest,i/25);
-		// 	let p = new THREE.Vector3().addVectors(dest,base);
-		// 	p.multiplyScalar(0.5)
-		// 	p.normalize()
-		// 	p.multiplyScalar(30)
-		// 	points.push(p);
-			
-		// }
-		
-		console.log(points)
 		// todo: clear trash!!!!!
 		path = new THREE.CatmullRomCurve3(points);
 		curve_geom = new THREE.TubeGeometry(path,64,0.1,50,false);
-		
 		curve_material = new THREE.MeshBasicMaterial({color: 0x0000ff});
 		curve_mesh = new THREE.Mesh(curve_geom, curve_material)
 		curve_meshes.push(curve_mesh);
@@ -531,9 +514,6 @@ function clearCurves(){
 
 	for (let i = 0; i<curve_meshes.length;i++){
 		scene.remove(curve_meshes[i])
-		curve_meshes[i].material.dispose()
-		curve_meshes[i].geometry.dispose()
-
 	}
 
 }
@@ -553,7 +533,7 @@ function clearCurves(){
 // Raycaster
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
-var sphereInter = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
+var sphereInter = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  1);
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
 var shift = new THREE.Vector3(); // distance between position of an object and points of intersection with the object
 var isDragging = false;
