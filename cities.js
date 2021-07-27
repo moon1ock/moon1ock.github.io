@@ -13,7 +13,6 @@ import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 // import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
 
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import { Points } from 'three';
 
 
 // import * as dat from './dat.gui'
@@ -518,8 +517,7 @@ document.addEventListener("pointermove", event => {
 
 
     if (isDragging) {
-		getCurve(point, noint);
-		getCurve(point, doint);
+
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
       	dragObject.position.addVectors(planeIntersect, shift);
@@ -527,6 +525,8 @@ document.addEventListener("pointermove", event => {
 		// move label too
 		if (dragObject == point){
 			pt_lbl.position.set(point.position.x,point.position.y,point.position.z)
+			getCurve(point, noint);
+			getCurve(point, doint);
 		}
 		else if(dragObject == noint){
 			n_lbl.position.set(noint.position.x,noint.position.y,noint.position.z)
