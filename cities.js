@@ -13,6 +13,7 @@ import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 // import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
 
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
+import { Points } from 'three';
 
 
 // import * as dat from './dat.gui'
@@ -268,7 +269,6 @@ const sphere = new THREE.Mesh(
   new THREE.MeshBasicMaterial({
     // color:0xFF0000
     map: new THREE.TextureLoader().load('./img/globe.jpg'),
-	normalMap:new THREE.TextureLoader().load('./img/globe.jpg')
   })
 )
 sphere.position.set(0,0,0);
@@ -333,6 +333,7 @@ const point = new THREE.Mesh(
 )
 point.position.z = 30
 scene.add(point)
+
 const noint = new THREE.Mesh(
 	new THREE.SphereBufferGeometry(0.25,21,21),
 	new THREE.MeshBasicMaterial({
@@ -342,7 +343,14 @@ const noint = new THREE.Mesh(
 noint.position.x = 30
 scene.add(noint)
 
-
+const doint = new THREE.Mesh(
+	new THREE.SphereBufferGeometry(0.25,21,21),
+	new THREE.MeshBasicMaterial({
+	  color: '#ff0000'
+	})
+ )
+ doint.position.x = -30
+scene.add(doint)
 
 
 
@@ -353,12 +361,16 @@ scene.add(noint)
 
 ////////////////////////////////////////
 
-var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:0, g:0, b:255, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+var pt_lbl = makeTextSprite( "A", { fontsize: 80, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
 pt_lbl.position.set(0,0,30);
 scene.add( pt_lbl );
 var n_lbl = makeTextSprite( "B", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
 n_lbl.position.set(30,0,0);
 scene.add( n_lbl );
+
+var d_lbl = makeTextSprite( "C", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+d_lbl.position.set(-30,0,0);
+scene.add( d_lbl );
 
 
 
@@ -397,13 +409,13 @@ function makeTextSprite( message, parameters )
 								  + borderColor.b + "," + borderColor.a + ")";
 
 	context.lineWidth = borderThickness;
-	roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 6);
+	roundRect(context, borderThickness/2+50, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 6);
 	// 1.4 is extra height factor for text below baseline: g,j,p,q.
 	
 	// text color
 	context.fillStyle = "rgba(0, 0, 0, 1.0)";
 
-	context.fillText( message, borderThickness, fontsize + borderThickness);
+	context.fillText( message, borderThickness+50, fontsize + borderThickness);
 	
 	// canvas contents will be used for a texture
 	var texture = new THREE.Texture(canvas) 
@@ -438,6 +450,55 @@ function roundRect(ctx, x, y, w, h, r)
 
 ////////////////////////////////////////////////
 
+////// Spider webs for points //////////
+
+var v1 = new THREE.Vector3();
+var v2 = new THREE.Vector3();
+var points = [];
+
+var curve_geom;
+var curve_material;
+var curve_mesh;
+function getCurve(p1,p2){
+	scene.remove(curve_mesh)
+	v1 = new THREE.Vector3(p1.position.x,p1.position.y,p1.position.z);
+	v2 = new THREE.Vector3(p2.position.x,p2.position.y,p2.position.z);
+
+	points = []
+
+	for (let i =0; i<=20; i++){
+		let p = new THREE.Vector3().lerpVectors(v1,v2,i/20);
+		
+		p.normalize()
+		p.x *=30
+		p.y*=30
+		p.z*=30
+		points.push(p);
+		
+	}
+	let path = new THREE.CatmullRomCurve3(points);
+	curve_geom = new THREE.TubeGeometry(path,20,0.1,8,false);
+	curve_material = new THREE.MeshBasicMaterial({color: 0x0000ff});
+	curve_mesh = new THREE.Mesh(curve_geom, curve_material)
+	scene.add(curve_mesh)
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ///////////////////////
@@ -457,14 +518,21 @@ document.addEventListener("pointermove", event => {
 
 
     if (isDragging) {
+		getCurve(point, noint);
+		getCurve(point, doint);
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
       	dragObject.position.addVectors(planeIntersect, shift);
+
+		// move label too
 		if (dragObject == point){
 			pt_lbl.position.set(point.position.x,point.position.y,point.position.z)
 		}
 		else if(dragObject == noint){
 			n_lbl.position.set(noint.position.x,noint.position.y,noint.position.z)
+		}
+		else if(dragObject == doint){
+			d_lbl.position.set(doint.position.x,doint.position.y,doint.position.z)
 		}
 	}
  }
@@ -476,7 +544,7 @@ document.addEventListener("pointermove", event => {
 document.addEventListener("pointerdown", () => {
 
 	raycaster.setFromCamera(mouse, camera);
-	var intersects = raycaster.intersectObjects([point, noint, sphere]);
+	var intersects = raycaster.intersectObjects([point, noint,doint, sphere]);
 	
 	// check if the shpere is intersected before the points are, and return in this case
 	if (intersects.length > 0 && intersects[0].object == sphere) return
@@ -507,6 +575,7 @@ function animate(){
 	// Star rotation happening here
 	stars.rotation.x+=0.0001
 	stars.rotation.y+=0.0001
+
 
 
 }
