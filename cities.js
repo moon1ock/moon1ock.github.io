@@ -519,7 +519,7 @@ function drawCurves(dragObject){
 		console.log(points)
 		// todo: clear trash!!!!!
 		path = new THREE.CatmullRomCurve3(points);
-		curve_geom = new THREE.TubeGeometry(path,64,0.1,50,false);
+		curve_geom = new THREE.TubeGeometry(path,64,0.05,50,false);
 		
 		curve_material = new THREE.MeshBasicMaterial({color: 0x0000ff});
 		curve_mesh = new THREE.Mesh(curve_geom, curve_material)
