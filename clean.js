@@ -11,7 +11,7 @@ let scene, renderer, camera, controls;
 function init(){
     // Scene and Camera
     scene = new THREE.Scene()
-    camera = new THREE.PerspectiveCamera( 60,innerWidth/innerHeight, 1,1400 )
+    camera = new THREE.PerspectiveCamera( 60,innerWidth/innerHeight, 1,200 )
     scene.add(camera);
     camera.position.set(0,75,200);
     camera.lookAt(scene.position);
@@ -59,12 +59,6 @@ function createGlobe(){
     scene.add(wireframe)
 }
 createGlobe()
-
-
-
-
-
-
 
 
 
