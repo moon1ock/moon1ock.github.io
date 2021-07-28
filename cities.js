@@ -518,7 +518,7 @@ function drawCurves(dragObject){
 		}
 
 		path = new THREE.CatmullRomCurve3(points);
-		curve_mesh = new THREE.Mesh(new THREE.TubeGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000ff}))
+		curve_mesh = new THREE.Mesh(new THREE.TubeGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc}))
 		curve_meshes.push(curve_mesh);
 
 	}
@@ -574,9 +574,7 @@ document.addEventListener("pointermove", event => {
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-
     if (isDragging) {
-
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(sphereInter, planeIntersect);
       	dragObject.position.addVectors(planeIntersect, shift);
@@ -633,8 +631,10 @@ document.addEventListener("pointerup", () => {
 
 
 
+// On demand rendering
+let renderRequested = false;
 function animate(){
-
+	renderRequested = false;
 	requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 	stats.update();
@@ -642,6 +642,17 @@ function animate(){
 	// Star rotation happening here
 	stars.rotation.x+=0.0001
 	stars.rotation.y+=0.0001
-
+	console.log(renderer.info.render)
 }
-animate()
+
+
+// animate()
+
+  
+function requestRenderIfNotRequested() {
+	if (!renderRequested) {
+		renderRequested = true;
+		requestAnimationFrame(animate);
+	}
+}
+requestRenderIfNotRequested()
