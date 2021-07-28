@@ -13,6 +13,7 @@ import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 // import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
 
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
+import { TextureLoader } from 'three';
 
 
 // import * as dat from './dat.gui'
@@ -191,9 +192,9 @@ Stats.Panel = function ( name, fg, bg ) {
 // Create a Scene and Set Up Camera
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
-  45,
+  60,
   innerWidth/innerHeight,
-  0.1,
+  1,
   1400  )
 scene.add(camera);
 camera.position.set(0,75,200);
@@ -222,7 +223,10 @@ THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 // CONTROLS
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.enablePan = false;
-
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 50;
+controls.maxDistance = 200;
 
 ///////////////// GUI  ///////
 
@@ -633,7 +637,7 @@ function animate(){
 	requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 	stats.update();
-
+	controls.update()
 	// Star rotation happening here
 	stars.rotation.x+=0.0001
 	stars.rotation.y+=0.0001
