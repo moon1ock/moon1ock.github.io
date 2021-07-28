@@ -194,7 +194,7 @@ const camera = new THREE.PerspectiveCamera(
   45,
   innerWidth/innerHeight,
   0.1,
-  20000  )
+  1400  )
 scene.add(camera);
 camera.position.set(0,75,200);
 camera.lookAt(scene.position);
@@ -378,7 +378,7 @@ scene.add( n_lbl );
 var d_lbl = makeTextSprite( "C", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
 d_lbl.position.set(-30,0,0);
 scene.add( d_lbl );
-var z_lbl = makeTextSprite( "z", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+var z_lbl = makeTextSprite( "Z", { fontsize: 80, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
 z_lbl.position.set(0,-30,0);
 scene.add( z_lbl );
 
@@ -465,8 +465,7 @@ var base = new THREE.Vector3();
 var dest = new THREE.Vector3();
 var points = [];
 var mid = new THREE.Vector3();
-var curve_geom;
-var curve_material;
+
 var path;
 var curve_mesh;
 var curve_meshes = [];
@@ -498,8 +497,8 @@ function drawCurves(dragObject){
 		mid.multiplyScalar(30);
 		
 		// interpolate base-> mid
-		for (let i =0; i<=20; i++){
-			let p = new THREE.Vector3().lerpVectors(base,mid,i/20);
+		for (let i =0; i<=12; i++){
+			let p = new THREE.Vector3().lerpVectors(base,mid,i/12);
 			p.multiplyScalar(0.5)
 			p.normalize()
 			p.multiplyScalar(30)
@@ -507,22 +506,17 @@ function drawCurves(dragObject){
 			
 		}
 		
-		for (let i =0; i<=20; i++){
-			let p = new THREE.Vector3().lerpVectors(mid,dest,i/20);
+		for (let i =0; i<=12; i++){
+			let p = new THREE.Vector3().lerpVectors(mid,dest,i/12);
 			p.multiplyScalar(0.5)
 			p.normalize()
 			p.multiplyScalar(30)
 			points.push(p);
 			
 		}
-		points.push(dest)
-		console.log(points)
-		// todo: clear trash!!!!!
+
 		path = new THREE.CatmullRomCurve3(points);
-		curve_geom = new THREE.TubeGeometry(path,64,0.05,50,false);
-		
-		curve_material = new THREE.MeshBasicMaterial({color: 0x0000ff});
-		curve_mesh = new THREE.Mesh(curve_geom, curve_material)
+		curve_mesh = new THREE.Mesh(new THREE.TubeGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000ff}))
 		curve_meshes.push(curve_mesh);
 
 	}
@@ -530,8 +524,6 @@ function drawCurves(dragObject){
 		scene.add(curve_meshes[i])
 	}
 
-
-	// scene.add(curve_mesh)
 	
 }
 
@@ -540,15 +532,14 @@ function drawCurves(dragObject){
 
 
 function clearCurves(){
-
+                   
 
 	for (let i = 0; i<curve_meshes.length;i++){
 		scene.remove(curve_meshes[i])
 		curve_meshes[i].material.dispose()
 		curve_meshes[i].geometry.dispose()
-
 	}
-
+	
 }
 
 
@@ -565,6 +556,10 @@ function clearCurves(){
 ///////////////////////
 // Raycaster
 var raycaster = new THREE.Raycaster();
+raycaster.near=1
+raycaster.far=150
+
+
 var mouse = new THREE.Vector2();
 var sphereInter = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
@@ -607,6 +602,7 @@ document.addEventListener("pointermove", event => {
 
 document.addEventListener("pointerdown", () => {
 
+
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects([point, noint,doint,zoint, sphere]);
 	
@@ -641,8 +637,6 @@ function animate(){
 	// Star rotation happening here
 	stars.rotation.x+=0.0001
 	stars.rotation.y+=0.0001
-
-
 
 }
 animate()
