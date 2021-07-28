@@ -13,7 +13,6 @@ import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 // import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
 
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import { TextureLoader } from 'three';
 
 
 // import * as dat from './dat.gui'
