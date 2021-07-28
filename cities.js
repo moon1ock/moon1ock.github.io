@@ -633,26 +633,21 @@ document.addEventListener("pointerup", () => {
 
 // On demand rendering
 let renderRequested = false;
+
 function animate(){
-	renderRequested = false;
-	requestAnimationFrame(animate)
-	renderer.render(scene, camera)
+
+	
+	
 	stats.update();
-	controls.update()
+	controls.update();
 	// Star rotation happening here
-	stars.rotation.x+=0.0001
-	stars.rotation.y+=0.0001
-	console.log(renderer.info.render)
+	stars.rotation.x+=0.0001;
+	stars.rotation.y+=0.0001;
+	renderer.render(scene, camera)
+	requestAnimationFrame(animate);
 }
 
 
-// animate()
+animate()
 
   
-function requestRenderIfNotRequested() {
-	if (!renderRequested) {
-		renderRequested = true;
-		requestAnimationFrame(animate);
-	}
-}
-requestRenderIfNotRequested()
