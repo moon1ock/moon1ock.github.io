@@ -17,7 +17,7 @@ function init(){
     camera.lookAt(scene.position);
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({antialias: true} )
+    renderer = new THREE.WebGLRenderer({antialias: true} )
     renderer.setSize(innerWidth, innerHeight)
     renderer.setPixelRatio(window.devicePixelRatio)
     document.body.appendChild(renderer.domElement)
@@ -59,3 +59,26 @@ function createGlobe(){
     scene.add(wireframe)
 }
 createGlobe()
+
+
+
+
+
+
+
+
+
+
+
+function animate(){
+
+	requestAnimationFrame(animate)
+	renderer.render(scene, camera)
+
+	controls.update()
+	// // Star rotation happening here
+	// stars.rotation.x+=0.0001
+	// stars.rotation.y+=0.0001
+
+}
+animate()
