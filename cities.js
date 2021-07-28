@@ -230,34 +230,7 @@ controls.maxDistance = 200;
 ///////////////// GUI  ///////
 
 
-const gui = new dat.GUI()
-const world = {
-	wireframe: true,
-	globe: true,
-	stars: true
-}
-var top = gui.addFolder('Basic Config');
 
-var wireGUI = top.add( world, 'wireframe' ).name("Show Wireframe").listen();
-wireGUI.onChange( function(value) { 
-	if (value) scene.add(wireframe)
-	else scene.remove(wireframe)
-});
-
-
-var starsGUI = top.add( world, 'stars' ).name("Show Stars").listen();
-starsGUI.onChange( function(value) { 
-	if (value) scene.add(stars)
-	else scene.remove(stars)
-});
-top.open()
-
-var globeGUI = top.add( world, 'globe' ).name("Show Globe").listen();
-globeGUI.onChange( function(value) {
-	if (value) scene.add(sphere)
-	else scene.remove(sphere)
-});
-top.open()
 
 
 

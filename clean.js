@@ -10,6 +10,39 @@ let scene, camera, controls, renderer;
 let stars, sphere;
 
 
+// DEBUG
+
+const gui = new dat.GUI()
+const world = {
+	wireframe: true,
+	globe: true,
+	stars: true
+}
+var top = gui.addFolder('Basic Config');
+
+
+var starsGUI = top.add( world, 'stars' ).name("Show Stars").listen();
+starsGUI.onChange( function(value) { 
+	if (value) scene.add(stars)
+	else scene.remove(stars)
+});
+top.open()
+
+var globeGUI = top.add( world, 'globe' ).name("Show Globe").listen();
+globeGUI.onChange( function(value) {
+	if (value) scene.add(sphere)
+	else scene.remove(sphere)
+});
+top.open()
+
+
+///
+
+
+
+
+
+
 ///// SETUP Functions ////
 // Create a Scene and Set Up Camera
 function init(){
