@@ -269,7 +269,6 @@ top.open()
 const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(30,50,50),
   new THREE.MeshBasicMaterial({
-    // color:0xFF0000
     map: new THREE.TextureLoader().load('./img/globe.jpg'),
   })
 )
@@ -282,7 +281,7 @@ scene.add(sphere)
 const wireframe = new THREE.Mesh(
 	new THREE.SphereGeometry(30,50,30),
   	new THREE.MeshBasicMaterial({
-      color: 0xAAAAAA,
+      color: 0xBBBBBB,
       wireframe: true,
       transparent: true,
 		opacity: 0.15
@@ -560,7 +559,7 @@ function clearCurves(){
 // Raycaster
 var raycaster = new THREE.Raycaster();
 raycaster.near=1
-raycaster.far=150
+raycaster.far=200
 
 
 var mouse = new THREE.Vector2();
@@ -614,9 +613,12 @@ document.addEventListener("pointerdown", () => {
 	raycaster.ray.intersectSphere(sphereInter, planeIntersect);
     
 	if (intersects.length > 0) {
+		
 		controls.enabled = false;
 		isDragging = true;
 		dragObject = intersects[0].object;
+
+		drawCurves(dragObject);
 
 	}
 } );
