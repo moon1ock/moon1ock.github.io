@@ -179,6 +179,11 @@ function generateLabel(city){
 
 generateCity('A',0,0,30) //todo: automate city generation
 generateCity('B',30,0,0)
+generateCity('C',30,0,0)
+generateCity('D',30,0,0)
+generateCity('E',30,0,0)
+generateCity('F',30,0,0)
+
 
 for (let i =0; i<cities.length; i++){
     scene.add(cities[i])
@@ -186,12 +191,70 @@ for (let i =0; i<cities.length; i++){
 }
 
 
+////// Spider Webs between points ////
+let base = new THREE.Vector3();
+let dest = new THREE.Vector3();
+let points = [];
+let mid = new THREE.Vector3();
+let path;
+let curve_mesh;
+let curve_meshes = [];
 
+function drawCurves(){
+	clearCurves()
+	curve_meshes = [];
 
+	base.set(cities[dragIdx].position.x, cities[dragIdx].position.y,cities[dragIdx].position.z)
+	for (let i=0;i<cities.length; i++){
+		if (i == dragIdx){continue}
 
+		dest.set(cities[i].position.x,cities[i].position.y,cities[i].position.z)
 
+		points = []
+		// use midpoint for better interpolation
+		mid.addVectors(dest,base);
+		mid.multiplyScalar(0.5);
+		mid.normalize()
+		mid.multiplyScalar(30);
+		
+		// interpolate base-> mid
+		for (let i =0; i<=12; i++){
+			let p = new THREE.Vector3().lerpVectors(base,mid,i/12);
+			p.multiplyScalar(0.5)
+			p.normalize()
+			p.multiplyScalar(30)
+			points.push(p);
+			
+		}
+		
+		for (let i =0; i<=12; i++){
+			let p = new THREE.Vector3().lerpVectors(mid,dest,i/12);
+			p.multiplyScalar(0.5)
+			p.normalize()
+			p.multiplyScalar(30)
+			points.push(p);
+			
+		}
 
+		path = new THREE.CatmullRomCurve3(points);
+		curve_mesh = new THREE.Mesh(new THREE.TubeGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc}))
+		curve_meshes.push(curve_mesh);
 
+	}
+	for (let i = 0; i<curve_meshes.length;i++){
+		scene.add(curve_meshes[i])
+	}
+}
+
+function clearCurves(){
+
+	for (let i = 0; i<curve_meshes.length;i++){
+		scene.remove(curve_meshes[i])
+		curve_meshes[i].material.dispose()
+		curve_meshes[i].geometry.dispose()
+	}
+}
+//////////
 
 
 
@@ -208,7 +271,6 @@ var raySphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
 var raySphereIntersect = new THREE.Vector3(); // point of intersection with the plane
 var shift = new THREE.Vector3(); // distance between position of an object and points of intersection with the object
 var isDragging = false;
-var dragObject, dragLabel;
 var dragIdx;
 rayCities.push(sphere)
 
@@ -222,8 +284,8 @@ document.addEventListener("pointermove", event => {
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         labels[dragIdx].position.set(cities[dragIdx].position.x,cities[dragIdx].position.y,cities[dragIdx].position.z) // move label to the point
-		// clearCurves();
-		// drawCurves(dragObject);
+
+		drawCurves();
 
 	}
  }
@@ -232,29 +294,24 @@ document.addEventListener("pointermove", event => {
 
 document.addEventListener("pointerdown", () => {
 
-
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(rayCities);
 	if (intersects.length > 0 && intersects[0].object == sphere) return// check if the shpere is intersected before the points are, and return in this case
 	raycaster.ray.intersectSphere(raySphere, raySphereIntersect); // get base position for later shift
 	if (intersects.length > 0) {
-
 		controls.enabled = false;
 		isDragging = true; 
-		// dragObject = intersects[0].object; // save the object to drag
-        for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; return }} // save the label to drag
-		// drawCurves(dragObject);
-
+        for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
+        drawCurves();
 	}
 } );
 
 document.addEventListener("pointerup", () => {
 	isDragging = false;
-	// dragObject = null;
     dragIdx = null;
 	controls.enabled = true;
 	// remove curves
-	// clearCurves();
+	clearCurves();
 } );
 
 
