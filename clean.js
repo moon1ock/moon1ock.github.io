@@ -48,10 +48,11 @@ top.open()
 function init(){
     // Scene and Camera
     scene = new THREE.Scene()
-    camera = new THREE.PerspectiveCamera( 60,innerWidth/innerHeight, 1,1400 )
+    camera = new THREE.PerspectiveCamera( 45,innerWidth/innerHeight, 1,1400 )
     scene.add(camera);
-    camera.position.set(0,75,200);
+    camera.position.set(0,30,90);
     camera.lookAt(scene.position);
+    camera.updateProjectionMatrix();
     // Renderer
     renderer = new THREE.WebGLRenderer({antialias: true} )
     renderer.setSize(innerWidth, innerHeight)
@@ -70,7 +71,7 @@ function init(){
 // Create the Globe and the wireframe
 function createGlobe(){
     sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(30,50,50),
+        new THREE.SphereBufferGeometry(30,50,50),
         new THREE.MeshBasicMaterial({
         map: new THREE.TextureLoader().load('./img/globe.jpg'),
         })
@@ -78,7 +79,7 @@ function createGlobe(){
     sphere.position.set(0,0,0);
     scene.add(sphere)
     const wireframe = new THREE.Mesh(
-        new THREE.SphereGeometry(30,50,30),
+        new THREE.SphereBufferGeometry(30,50,30),
             new THREE.MeshBasicMaterial({
             color: 0xBBBBBB,
             wireframe: true,
@@ -213,15 +214,14 @@ function generateLabel(city){
 generateCity('A',0,0,30) //todo: automate city generation
 generateCity('B',30,0,0)
 generateCity('C',30,0,0)
-generateCity('D',30,0,0)
-generateCity('E',30,0,0)
-generateCity('F',30,0,0)
 
 
 for (let i =0; i<cities.length; i++){
     scene.add(cities[i])
     scene.add(labels[i])
 }
+
+
 
 
 ////// Spider Webs between points ////
@@ -270,7 +270,7 @@ function drawCurves(){
 		}
 
 		path = new THREE.CatmullRomCurve3(points);
-		curve_mesh = new THREE.Mesh(new THREE.TubeGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc}))
+		curve_mesh = new THREE.Mesh(new THREE.TubeBufferGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc}))
 		curve_meshes.push(curve_mesh);
 
 	}
@@ -317,9 +317,7 @@ document.addEventListener("pointermove", event => {
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         labels[dragIdx].position.set(cities[dragIdx].position.x,cities[dragIdx].position.y,cities[dragIdx].position.z) // move label to the point
-
 		drawCurves();
-
 	}
  }
 );
@@ -359,6 +357,7 @@ function animate(){
 	// Star rotation happening here
     rotateStars()
 
+    console.log(renderer.info.memory)
     requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }
