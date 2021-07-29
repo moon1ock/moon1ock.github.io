@@ -5,7 +5,6 @@
  * 
 */
 
-
 export var atlanta = {
     lat:  33.753746,
     lon: -84.386330

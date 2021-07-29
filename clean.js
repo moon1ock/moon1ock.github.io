@@ -207,16 +207,45 @@ function convertCoordsRad(lat,lon){
     let x = -30*(Math.sin(phi)*Math.cos(theta));
     let y = 30*(Math.cos(phi));
     let z = 30*(Math.sin(phi) * Math.sin(theta));
-
     return {x,y,z}
 }
 // scatter cities around a bit
 function sca(){
-    return 0;
+    // return 0;
     return Math.random()*10-5;
 }
 
-
+function changeColors(){
+    // this can be all removed to [drag idx][true position]
+    let factual;
+    if (dragIdx == 0){
+        factual = convertCoordsRad(atlanta.lat, atlanta.lon);
+    }
+    else if (dragIdx == 1){
+        factual = convertCoordsRad(beijing.lat, beijing.lon);
+    }
+    else if (dragIdx == 2){
+        factual = convertCoordsRad(cape.lat, cape.lon);
+    }
+    else if (dragIdx == 3){
+        factual = convertCoordsRad(delhi.lat, delhi.lon);
+    }
+    else if (dragIdx == 4){
+        factual = convertCoordsRad(ekaterinburg.lat, ekaterinburg.lon);
+    }
+    else if (dragIdx == 5){
+        factual = convertCoordsRad(florence.lat, florence.lon);
+    }
+    else if (dragIdx == 6){
+        factual = convertCoordsRad(goiania.lat, goiania.lon);
+    }
+    let curr = cities[dragIdx].position;
+    if (Math.sqrt((factual.x - curr.x)**2 +(factual.y - curr.y)**2 +(factual.y - curr.y)**2) < 0.4){
+        cities[dragIdx].material.color.setHex(0x00ff00);
+    }
+    else{ cities[dragIdx].material.color.setHex(0xff0000);}
+    return
+}
 
 /// Create the cities ///
 generateCity('A',convertCoordsRad(atlanta.lat+sca(), atlanta.lon+sca())) 
@@ -333,6 +362,7 @@ document.addEventListener("pointermove", event => {
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         labels[dragIdx].position.set(cities[dragIdx].position.x,cities[dragIdx].position.y,cities[dragIdx].position.z) // move label to the point
+        changeColors();
 		drawCurves();
 	}
  }
@@ -377,3 +407,10 @@ function animate(){
 	renderer.render(scene, camera)
 }
 animate()
+
+// ToDo:
+/*
+- Save true positions x,y,z of cities to avoid repeated calc
+
+
+*/
