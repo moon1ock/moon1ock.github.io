@@ -54,11 +54,13 @@ function init(){
     THREEx.WindowResize(renderer, camera);
     // Orbit Controls
     controls = new OrbitControls( camera, renderer.domElement );
+ 
     controls.enablePan = false;
     controls.enableDamping = true;
     controls.dampingFactor = 0.075;
     controls.minDistance = 50;
     controls.maxDistance = 200;
+    controls.rotateSpeed = 0.5;
 }
 // Create the Globe and the wireframe
 function createGlobe(){
@@ -325,7 +327,7 @@ document.addEventListener("pointermove", event => {
 
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
+    // save mouse here
     if (isDragging) {
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
