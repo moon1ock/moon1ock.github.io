@@ -1,6 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania} from './js/coordinates'
+import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania} from './js/coordinates.js'
 
 ///// GLOBAL VARIABLES //////
 
