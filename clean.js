@@ -65,7 +65,7 @@ function createGlobe(){
     sphere = new THREE.Mesh(
         new THREE.SphereBufferGeometry(30,50,50),
         new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load('./img/globe.jpg'),
+        map: new THREE.TextureLoader().load('./img/globe1.jpg'),
         })
     )
     sphere.position.set(0,0,0);
@@ -338,10 +338,10 @@ document.addEventListener("pointermove", event => {
 
 
 document.addEventListener("pointerdown", () => {
-
+    
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(rayCities);
-	if (intersects.length > 0 && intersects[0].object == sphere) return// check if the shpere is intersected before the points are, and return in this case
+	if (intersects.length > 0 && intersects[0].object == sphere) { return}// check if the shpere is intersected before the points are, and return in this case
 	raycaster.ray.intersectSphere(raySphere, raySphereIntersect); // get base position for later shift
 	if (intersects.length > 0) {
 		controls.enabled = false;
@@ -352,6 +352,7 @@ document.addEventListener("pointerdown", () => {
 } );
 
 document.addEventListener("pointerup", () => {
+
 	isDragging = false;
     dragIdx = null;
 	controls.enabled = true;
