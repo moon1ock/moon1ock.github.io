@@ -1,18 +1,3 @@
-// This THREEx helper makes it easy to handle window resize.
-// It will update renderer and camera when window is resized.
-//
-// # Usage
-//
-// **Step 1**: Start updating renderer and camera
-//
-// ```var windowResize = new THREEx.WindowResize(aRenderer, aCamera)```
-//    
-// **Step 2**: stop updating renderer and camera
-//
-// ```windowResize.destroy()```
-// # Code
-
-//
 
 /** @namespace */
 var THREEx	= THREEx || {}

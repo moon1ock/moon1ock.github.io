@@ -1,6 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-
+import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania} from './js/coordinates'
 
 ///// GLOBAL VARIABLES //////
 
@@ -9,9 +9,7 @@ let scene, camera, controls, renderer;
 // objects
 let stars, sphere;
 
-
 // DEBUG
-
 const gui = new dat.GUI()
 const world = {
 	wireframe: true,
@@ -19,23 +17,17 @@ const world = {
 	stars: true
 }
 var top = gui.addFolder('Basic Config');
-
-
 var starsGUI = top.add( world, 'stars' ).name("Show Stars").listen();
 starsGUI.onChange( function(value) { 
 	if (value) scene.add(stars)
 	else scene.remove(stars)
 });
-top.open()
-
 var globeGUI = top.add( world, 'globe' ).name("Show Globe").listen();
 globeGUI.onChange( function(value) {
 	if (value) scene.add(sphere)
 	else scene.remove(sphere)
 });
 top.open()
-
-
 ///
 
 
@@ -43,8 +35,8 @@ top.open()
 
 
 
-///// SETUP Functions ////
-// Create a Scene and Set Up Camera
+// ///// SETUP Functions ////
+// // Create a Scene and Set Up Camera
 function init(){
     // Scene and Camera
     scene = new THREE.Scene()
@@ -126,7 +118,7 @@ let cities = [];
 let labels = [];
 let rayCities = [];
 // create a city with `x-y-z` coordinates
-function generateCity(name,x,y,z){
+function generateCity(name,coords){
     const point = new THREE.Mesh(
         new THREE.SphereBufferGeometry(0.25,21,21),
         new THREE.MeshBasicMaterial({
@@ -134,7 +126,7 @@ function generateCity(name,x,y,z){
         })
       )
     point.name = name
-    point.position.set(x,y,z)
+    point.position.set(coords.x,coords.y,coords.z)
     cities.push(point)
     rayCities.push(point)
     generateLabel(point)
@@ -206,14 +198,36 @@ function generateLabel(city){
     labels.push(label)
 }
 
+// convert lat-lon to x,y,z
+function convertCoordsRad(lat,lon){
+    var phi = (90-lat)*(Math.PI/180);
+    var theta = (lon+180)*(Math.PI/180);
+    let x = -30*(Math.sin(phi)*Math.cos(theta));
+    let y = 30*(Math.cos(phi));
+    let z = 30*(Math.sin(phi) * Math.sin(theta));
+
+    return {x,y,z}
+}
+// scatter cities around a bit
+function sca(){
+    return 0;
+    return Math.random()*10-5;
+}
 
 
 
-/// Function Calls ///
+/// Create the cities ///
+generateCity('A',convertCoordsRad(atlanta.lat+sca(), atlanta.lon+sca())) 
+generateCity('B',convertCoordsRad(beijing.lat+sca(), beijing.lon+sca())) 
+generateCity('C',convertCoordsRad(cape.lat+sca(), cape.lon+sca())) 
+generateCity('D',convertCoordsRad(delhi.lat+sca(), delhi.lon+sca())) 
+generateCity('E',convertCoordsRad(ekaterinburg.lat+sca(), ekaterinburg.lon+sca())) 
+generateCity('F',convertCoordsRad(florence.lat+sca(), florence.lon+sca())) 
+generateCity('G',convertCoordsRad(goiania.lat+sca(), goiania.lon+sca())) 
 
-generateCity('A',0,0,30) //todo: automate city generation
-generateCity('B',30,0,0)
-generateCity('C',30,0,0)
+
+
+
 
 
 for (let i =0; i<cities.length; i++){
@@ -356,8 +370,6 @@ function animate(){
 
 	// Star rotation happening here
     rotateStars()
-
-    console.log(renderer.info.memory)
     requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }
