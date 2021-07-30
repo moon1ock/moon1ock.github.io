@@ -1,6 +1,8 @@
 import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania} from './js/coordinates.js'
+import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania,hobart,irkutsk,jakarta, kiev} from './js/coordinates.js'
+
+
 
 ///// GLOBAL VARIABLES //////
 
@@ -283,6 +285,20 @@ function changeColors(){
     else if (dragIdx == 6){
         factual = convertCoordsRad(goiania.lat, goiania.lon);
     }
+    else if (dragIdx == 7){
+        factual = convertCoordsRad(hobart.lat, hobart.lon);
+    }
+    else if (dragIdx == 8){
+        factual = convertCoordsRad(irkutsk.lat, irkutsk.lon);
+    }
+    else if (dragIdx == 9){
+        factual = convertCoordsRad(jakarta.lat, jakarta.lon);
+    }
+    else if (dragIdx == 10){
+        factual = convertCoordsRad(kiev.lat, kiev.lon);
+    }
+
+    
     let curr = cities[dragIdx].position;
     if (Math.sqrt((factual.x - curr.x)**2 +(factual.y - curr.y)**2 +(factual.y - curr.y)**2) < 0.4){
         cities[dragIdx].material.color.setHex(0x00ff00);
@@ -299,6 +315,10 @@ generateCity('D',convertCoordsRad(delhi.lat+sca(), delhi.lon+sca()))
 generateCity('E',convertCoordsRad(ekaterinburg.lat+sca(), ekaterinburg.lon+sca())) 
 generateCity('F',convertCoordsRad(florence.lat+sca(), florence.lon+sca())) 
 generateCity('G',convertCoordsRad(goiania.lat+sca(), goiania.lon+sca())) 
+generateCity('H',convertCoordsRad(hobart.lat+sca(), hobart.lon+sca())) 
+generateCity('I',convertCoordsRad(irkutsk.lat+sca(), irkutsk.lon+sca())) 
+generateCity('J',convertCoordsRad(jakarta.lat+sca(), jakarta.lon+sca())) 
+generateCity('K',convertCoordsRad(kiev.lat+sca(), kiev.lon+sca())) 
 
 
 
