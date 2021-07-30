@@ -8,6 +8,8 @@ import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania} from './
 let scene, camera, controls, renderer;
 // objects
 let stars, sphere;
+let frame = 0;
+
 
 // DEBUG
 const gui = new dat.GUI()
@@ -29,6 +31,10 @@ globeGUI.onChange( function(value) {
 });
 top.open()
 ///
+
+
+// SIDE nav
+
 
 
 
@@ -118,7 +124,7 @@ genStars();
 
 let cities = [];
 let labels = [];
-let rayCities = [];
+let rayCities = []; // just an array to store for RayCaster, don't modify
 // create a city with `x-y-z` coordinates
 function generateCity(name,coords){
     const point = new THREE.Mesh(
@@ -202,18 +208,56 @@ function generateLabel(city){
 
 // convert lat-lon to x,y,z
 function convertCoordsRad(lat,lon){
-    var phi = (90-lat)*(Math.PI/180);
-    var theta = (lon+180)*(Math.PI/180);
-    let x = -30*(Math.sin(phi)*Math.cos(theta));
-    let y = 30*(Math.cos(phi));
-    let z = 30*(Math.sin(phi) * Math.sin(theta));
+
+    var latRad = lat * (Math.PI / 180);
+    var lonRad = -lon * (Math.PI / 180);
+    var x = Math.cos(latRad) * Math.cos(lonRad) * 30;
+    var y = Math.sin(latRad) * 30;
+    var z = Math.cos(latRad) * Math.sin(lonRad) * 30;
     return {x,y,z}
 }
-// scatter cities around a bit
+
+
+function convertPolarToAng(pos){
+    /*
+    function to convert {X,Y,Z} coordinates of the THREE JS sphere to {lat,lon}
+    */
+    var lat = Math.asin(pos.y / 30)*(180/Math.PI) ;
+    var lon = -1*Math.atan2(pos.z, pos.x)*(180/Math.PI);
+    	
+    return {lat, lon}
+}
+
+
+// scatter cities around a bit when generating
 function sca(){
-    // return 0;
+    return 0;
     return Math.random()*10-5;
 }
+const EarthR = 6371e3;
+
+
+// calculate the distance between the cities
+function haversine(){
+    var home = convertPolarToAng(cities[dragIdx].position);
+    document.getElementById('loc').innerHTML = "lat:" + (Math.round(home.lat*100)/100).toString() + " lon:" +  (Math.round(home.lon*100)/100).toString()
+    for (var i = 0; i<cities.length; i++){
+        // if (i == dragIdx){continue}
+        var away =  convertPolarToAng(cities[i].position);
+        var φ1 = home.lat * Math.PI/180; 
+        var φ2 = away.lat * Math.PI/180;
+        var Δφ = (away.lat-home.lat) * Math.PI/180;
+        var Δλ = (away.lon-home.lon) * Math.PI/180;
+        var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+               Math.cos(φ1) * Math.cos(φ2) *
+               Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = EarthR * c; // in metres
+        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ (Math.round(d/10)/100).toString() + "km";
+    }
+
+}
+
 
 function changeColors(){
     // this can be all removed to [drag idx][true position]
@@ -274,8 +318,6 @@ let base = new THREE.Vector3();
 let dest = new THREE.Vector3();
 let points = [];
 let mid = new THREE.Vector3();
-let path;
-let curve_mesh;
 let curve_meshes = [];
 
 function drawCurves(){
@@ -314,9 +356,8 @@ function drawCurves(){
 			
 		}
 
-		path = new THREE.CatmullRomCurve3(points);
-		curve_mesh = new THREE.Mesh(new THREE.TubeBufferGeometry(path,64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc}))
-		curve_meshes.push(curve_mesh);
+
+		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc})));
 
 	}
 	for (let i = 0; i<curve_meshes.length;i++){
@@ -363,7 +404,9 @@ document.addEventListener("pointermove", event => {
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         labels[dragIdx].position.set(cities[dragIdx].position.x,cities[dragIdx].position.y,cities[dragIdx].position.z) // move label to the point
         changeColors();
-		drawCurves();
+        haversine();
+        // if (frame == 0) 
+        drawCurves();
 	}
  }
 );
@@ -400,7 +443,7 @@ document.addEventListener("pointerup", () => {
 function animate(){
 
 	controls.update() // for damping effect
-
+    frame = (frame+1)%2;
 	// Star rotation happening here
     rotateStars()
     requestAnimationFrame(animate)
@@ -412,5 +455,8 @@ animate()
 /*
 - Save true positions x,y,z of cities to avoid repeated calc
 
+
+
+- https://www.movable-type.co.uk/scripts/latlong.html check law of sines for shortest distance between points
 
 */

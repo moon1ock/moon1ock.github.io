@@ -6,20 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flat Earth Debunk</title>
     <style>
-
       body{
-      /* overflow: hidden; */
-      margin:0;
+        margin:0;
       }
+      .sidebar {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+        color: white;
+        }
+        
+        .sidebar div {
+        padding: 5px 5px 5px 10px;
+        font-size: 15px;
+        display: block;
+        transition: 0.5s;
+        cursor: pointer;
+        }
+        
+        .sidebar .closebtn {
+        position: absolute;
+        top: 0px;
+        right: 25px;
+        font-size: 36px;
+        }
+        .logo {
+          max-width: 10%;
+          height: auto;
+        }
+        .Open
 
 
     </style>
   </head>
   <body>
-
+    <div id="mySidebar" class="sidebar">
+      <div class="closebtn" onclick="closeNav()">×</div>
+      <div id = "loc"></div>
+      <div id = "0"></div>
+      <div id = "1"></div>
+      <div id = "2"></div>
+      <div id = "3"></div>
+      <div id = "4"></div>
+      <div id = "5"></div>
+      <div id = "6"></div>
+     </div>
 
     <!-- <script type="module" src="/main.js"></script> -->
+    <span style="font-size:25px;cursor:pointer;position: absolute; color:white;" onclick="openNav()"><img src="./img/arrow.png" alt=""></span>
+    
+    <script>
+      function openNav() {
+        document.getElementById("mySidebar").style.width = "180px";
+        document.getElementById('Logo').style.display = "none"
+      }
+      
+      function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+        document.getElementById('Logo').style.display = "inline"
 
+      }
+    </script>
     <script src="js/THREEx.WindowResize.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
 
@@ -32,6 +84,7 @@
 </html>
 
 <!--
+
 .getSize ( target : Vector2 ) : Vector2
 target — the result will be copied into this Vector2.
 
