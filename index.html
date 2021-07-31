@@ -36,12 +36,31 @@
         right: 25px;
         font-size: 36px;
         }
-        #Logo {
-          width: 12%;
-          height: auto;
-          top:49%;
-          left: 1%
+        .buttonContrainer{
+          position: relative;
+          width: 100%;
+          height: 100%;
         }
+        #LogoBtn{
+          color:white;
+          margin:0;
+          font-size: 55px;
+          top: 50%;
+          -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
+          left: 5px;
+          position: absolute;
+        }
+        #LogoBtn:hover{
+          font-size: 80px;
+          top: 50%;
+          -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
+          left: 3px;
+          position: absolute;
+          cursor: help;
+        }
+
 
     </style>
   </head>
@@ -60,22 +79,24 @@
       <div id = "8"></div>
       <div id = "9"></div>
       <div id = "10"></div>
-
-
      </div>
 
     <!-- <script type="module" src="/main.js"></script> -->
-    <span id = "Logo" style="font-size:25px;cursor:pointer;position: absolute; color:white;" onclick="openNav()"> <img id="Logo" src="./img/arrow.png" alt=""></span>
+    <div class = "buttonContainer">
+      <!-- <img id="LogoBtn" src="./img/arrow.png" onclick="openNav()" alt=""> -->
+      <div id="LogoBtn" onclick="openNav()">〉</div>
+
+    </div>
     
     <script>
       function openNav() {
         document.getElementById("mySidebar").style.width = "180px";
-        document.getElementById('Logo').style.display = "none"
+        document.getElementById('LogoBtn').style.display = "none"
       }
       
       function closeNav() {
         document.getElementById("mySidebar").style.width = "0";
-        document.getElementById('Logo').style.display = "inline"
+        document.getElementById('LogoBtn').style.display = "inline"
 
       }
     </script>

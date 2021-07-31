@@ -477,6 +477,5 @@ animate()
 
 
 
-- https://www.movable-type.co.uk/scripts/latlong.html check law of sines for shortest distance between points
-
+https://getbootstrap.com/docs/4.0/components/dropdowns/
 */
