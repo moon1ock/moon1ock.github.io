@@ -189,7 +189,7 @@ function makeTextSprite( message, parameters )
 	var texture = new THREE.Texture(canvas) 
 	texture.needsUpdate = true;
 
-	var spriteMaterial = new THREE.SpriteMaterial( { map: texture, } );
+	var spriteMaterial = new THREE.SpriteMaterial( { map: texture} );
 	var sprite = new THREE.Sprite( spriteMaterial );
 	sprite.scale.set(5,2,6.0);
 	spriteMaterial.depthTest = false;
@@ -233,7 +233,7 @@ function convertPolarToAng(pos){
 
 // scatter cities around a bit when generating
 function sca(){
-    // return 0;
+    return 0;
     return Math.random()*10-5;
 }
 const EarthR = 6371e3;
@@ -265,45 +265,46 @@ function changeColors(){
     // this can be all removed to [drag idx][true position]
     let factual;
     if (dragIdx == 0){
-        factual = convertCoordsRad(atlanta.lat, atlanta.lon);
+        factual = atlanta
     }
     else if (dragIdx == 1){
-        factual = convertCoordsRad(beijing.lat, beijing.lon);
+        factual = beijing;
     }
     else if (dragIdx == 2){
-        factual = convertCoordsRad(cape.lat, cape.lon);
+        factual = cape;
     }
     else if (dragIdx == 3){
-        factual = convertCoordsRad(delhi.lat, delhi.lon);
+        factual = delhi;
     }
     else if (dragIdx == 4){
-        factual = convertCoordsRad(ekaterinburg.lat, ekaterinburg.lon);
+        factual = ekaterinburg;
     }
     else if (dragIdx == 5){
-        factual = convertCoordsRad(florence.lat, florence.lon);
+        factual = florence;
     }
     else if (dragIdx == 6){
-        factual = convertCoordsRad(goiania.lat, goiania.lon);
+        factual = goiania;
     }
     else if (dragIdx == 7){
-        factual = convertCoordsRad(hobart.lat, hobart.lon);
-    }
-    else if (dragIdx == 8){
-        factual = convertCoordsRad(irkutsk.lat, irkutsk.lon);
-    }
-    else if (dragIdx == 9){
-        factual = convertCoordsRad(jakarta.lat, jakarta.lon);
-    }
-    else if (dragIdx == 10){
-        factual = convertCoordsRad(kiev.lat, kiev.lon);
+        factual = hobart;
     }
 
+
     
-    let curr = cities[dragIdx].position;
-    if (Math.sqrt((factual.x - curr.x)**2 +(factual.y - curr.y)**2 +(factual.y - curr.y)**2) < 0.4){
+    let curr = convertPolarToAng(cities[dragIdx].position);
+    // if (Math.sqrt((factual.x - curr.x)**2 +(factual.y - curr.y)**2 +(factual.y - curr.y)**2) < 0.4){
+    //     cities[dragIdx].material.color.setHex(0x00ff00);
+    //     console.log((factual.x-curr.x)**2+ (factual.y - curr.y)**2 +(factual.y - curr.y)**2)
+    // }
+    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.8){
         cities[dragIdx].material.color.setHex(0x00ff00);
+        labels[dragIdx].material.color.setHex(0x59ff4f); 
+        
+
+  
+
     }
-    else{ cities[dragIdx].material.color.setHex(0xff0000);}
+    else{ cities[dragIdx].material.color.setHex(0xff0000);labels[dragIdx].material.color.setHex(0xFFFFFF) }
     return
 }
 
@@ -425,8 +426,7 @@ document.addEventListener("pointermove", event => {
         labels[dragIdx].position.set(cities[dragIdx].position.x,cities[dragIdx].position.y,cities[dragIdx].position.z) // move label to the point
         changeColors();
         haversine();
-        // if (frame == 0) 
-        drawCurves();
+        if (frame == 0) drawCurves();
 	}
  }
 );
@@ -436,12 +436,14 @@ document.addEventListener("pointerdown", () => {
     
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(rayCities);
-	if (intersects.length > 0 && intersects[0].object == sphere) { return}// check if the shpere is intersected before the points are, and return in this case
+	if (intersects.length > 0 && intersects[0].object == sphere) {  return }// check if the shpere is intersected before the points are, and return in this case
 	raycaster.ray.intersectSphere(raySphere, raySphereIntersect); // get base position for later shift
 	if (intersects.length > 0) {
 		controls.enabled = false;
 		isDragging = true; 
         for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
+        // for (let i = 0; i<labels.length;i++){if (labels[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
+
         drawCurves();
 	}
 } );
@@ -463,7 +465,7 @@ document.addEventListener("pointerup", () => {
 function animate(){
 
 	controls.update() // for damping effect
-    frame = (frame+1)%2;
+    frame = (frame+1)%1;
 	// Star rotation happening here
     rotateStars()
     requestAnimationFrame(animate)
