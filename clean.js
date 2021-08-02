@@ -125,21 +125,22 @@ genStars();
 ///// CREATE CITIES /////
 
 let cities = [];
-let labels = [];
 let rayCities = []; // just an array to store for RayCaster, don't modify
 // create a city with `x-y-z` coordinates
 function generateCity(name,coords){
+   
     const point = new THREE.Mesh(
         new THREE.SphereBufferGeometry(0.25,21,21),
         new THREE.MeshBasicMaterial({
           color: '#ff0000'
-        })
-      )
+        }))
+
     point.name = name
     point.position.set(coords.x,coords.y,coords.z)
     cities.push(point)
     rayCities.push(point)
-    generateLabel(point)
+    point.add(generateLabel(point))
+    
 }
 
 function makeTextSprite( message, parameters )
@@ -203,9 +204,7 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 function generateLabel(city){
-    let label = makeTextSprite( city.name, { fontsize: 80, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
-    label.position.set(city.position.x,city.position.y,city.position.z);
-    labels.push(label)
+    return makeTextSprite( city.name, { fontsize: 80, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
 }
 
 // convert lat-lon to x,y,z
@@ -233,7 +232,7 @@ function convertPolarToAng(pos){
 
 // scatter cities around a bit when generating
 function sca(){
-    return 0;
+    // return 0;
     return Math.random()*10-5;
 }
 const EarthR = 6371e3;
@@ -289,22 +288,14 @@ function changeColors(){
         factual = hobart;
     }
 
-
-    
     let curr = convertPolarToAng(cities[dragIdx].position);
-    // if (Math.sqrt((factual.x - curr.x)**2 +(factual.y - curr.y)**2 +(factual.y - curr.y)**2) < 0.4){
-    //     cities[dragIdx].material.color.setHex(0x00ff00);
-    //     console.log((factual.x-curr.x)**2+ (factual.y - curr.y)**2 +(factual.y - curr.y)**2)
-    // }
-    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.8){
-        cities[dragIdx].material.color.setHex(0x00ff00);
-        labels[dragIdx].material.color.setHex(0x59ff4f); 
-        
 
-  
+    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.8){
+        cities[dragIdx].material.color.setHex(0x00AB08);
+        cities[dragIdx].children[0].material.color.setHex(0x59ff4f); 
 
     }
-    else{ cities[dragIdx].material.color.setHex(0xff0000);labels[dragIdx].material.color.setHex(0xFFFFFF) }
+    else{ cities[dragIdx].material.color.setHex(0xff0000);cities[dragIdx].children[0].material.color.setHex(0xFFFFFF) }
     return
 }
 
@@ -328,7 +319,7 @@ generateCity('H',convertCoordsRad(hobart.lat+sca(), hobart.lon+sca()))
 
 for (let i =0; i<cities.length; i++){
     scene.add(cities[i])
-    scene.add(labels[i])
+
 }
 
 
@@ -423,7 +414,6 @@ document.addEventListener("pointermove", event => {
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
-        labels[dragIdx].position.set(cities[dragIdx].position.x,cities[dragIdx].position.y,cities[dragIdx].position.z) // move label to the point
         changeColors();
         haversine();
         if (frame == 0) drawCurves();
@@ -442,8 +432,6 @@ document.addEventListener("pointerdown", () => {
 		controls.enabled = false;
 		isDragging = true; 
         for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
-        // for (let i = 0; i<labels.length;i++){if (labels[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
-
         drawCurves();
 	}
 } );
