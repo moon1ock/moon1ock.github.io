@@ -178,7 +178,7 @@ function makeTextSprite( message, parameters )
 								  + borderColor.b + "," + borderColor.a + ")";
 
 	context.lineWidth = borderThickness;
-	roundRect(context, borderThickness/2+50, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 6);
+	roundRect(context, borderThickness/2+50, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 19);
 	// 1.4 is extra height factor for text below baseline: g,j,p,q.
 	
 	// text color
