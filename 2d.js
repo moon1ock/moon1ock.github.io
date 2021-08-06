@@ -10,7 +10,7 @@ document.body.appendChild(renderer.domElement);
 
 var controls = new MapControls(camera, renderer.domElement);
 
-scene.add(new THREE.GridHelper(70, 70));
+scene.add(new THREE.GridHelper(90, 180, 0x121212, 0x121212 ));
 
 
 
@@ -113,6 +113,75 @@ for(let i = 0; i<4; i++){
 
 
 
+
+
+
+////////////// CURVES //////////
+
+let base = new THREE.Vector3();
+let dest = new THREE.Vector3();
+let points = [];
+
+let curve_meshes = [];
+
+function drawCurves(){
+	clearCurves()
+	curve_meshes = [];
+
+	base.set(cities[dragIdx].position.x, cities[dragIdx].position.y,cities[dragIdx].position.z)
+	for (let i=0;i<cities.length; i++){
+		if (i == dragIdx){continue}
+
+		dest.set(cities[i].position.x,cities[i].position.y,cities[i].position.z)
+
+		points = []
+
+
+		// interpolate base-> mid
+		for (let i =0; i<=12; i++){
+			let p = new THREE.Vector3().lerpVectors(base,dest,i/12);
+			points.push(p);
+			
+		}
+		
+
+
+
+		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc})));
+
+	}
+	for (let i = 0; i<curve_meshes.length;i++){
+		scene.add(curve_meshes[i])
+	}
+}
+
+function clearCurves(){
+
+	for (let i = 0; i<curve_meshes.length;i++){
+		scene.remove(curve_meshes[i])
+		curve_meshes[i].material.dispose()
+		curve_meshes[i].geometry.dispose()
+	}
+}
+//////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ///////////
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -120,56 +189,81 @@ var plane = new THREE.Plane();
 var pNormal = new THREE.Vector3(0, 1, 0); // plane's normal
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
 var pIntersect = new THREE.Vector3(); // point of intersection with an object (plane's point)
-var shift = new THREE.Vector3(); // distance between position of an object and points of intersection with the object
+var shift = new THREE.Vector3(0,0,0); // distance between position of an object and points of intersection with the object
 var isDragging = false;
-var dragObject;
+var dragIdx;
+
+// function getDistance(){
+//     for (let i=0; i<cities.length; i++){
+//         console.log(cities[dragIdx].name, "->", cities[i].name, ': ',450*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2) )
+
+//     }
+// }
 
 function getDistance(){
+
+    document.getElementById('loc').innerHTML = cities[dragIdx].name
     for (let i=0; i<cities.length; i++){
-        console.log(dragObject.name, "->", cities[i].name, ': ',450*Math.sqrt((dragObject.position.x - cities[i].position.x)**2 +  (dragObject.position.z - cities[i].position.z)**2) )
+        document.getElementById(i.toString()).innerHTML = cities[dragIdx].name + "->"+cities[i].name+': '+150*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2).toString()
 
     }
+
 }
 // events
 document.addEventListener("pointermove", event => {
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
-    if (raycaster.intersectObjects(cities).length>0){
-        document.body.style.cursor =  'grab';
-    }
-    else{
-        document.body.style.cursor =  'auto';
+    if (!isDragging){
+        var intersects = raycaster.intersectObjects(cities);
+    
+        if (raycaster.intersectObjects(cities).length>0){
+            for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
+            getDistance()
+            drawCurves()
 
-    }
+            document.body.style.cursor =  'grab';
+        }
+        else{
+            document.body.style.cursor =  'auto';
+            dragIdx = null;
+            clearCurves();
+        }}
 
     if (isDragging) {
-        raycaster.setFromCamera(mouse, camera);
-    	raycaster.ray.intersectPlane(plane, planeIntersect);
-      dragObject.position.addVectors(planeIntersect, shift);
-      getDistance()
+    	
+        raycaster.ray.intersectPlane(plane, planeIntersect);
+        cities[dragIdx].position.addVectors(planeIntersect, shift);
+        // console.log(cities[dragIdx].position);
+        getDistance()
+        drawCurves()
+
     }
 });
 
 document.addEventListener("pointerdown", () => {
 	
     var intersects = raycaster.intersectObjects(cities);
+    raycaster.ray.intersectPlane(plane, planeIntersect);
 
       if (intersects.length > 0) {
-          // CHANGE THIS to dragIDX logic with raycaster set and no shift vectors
-			controls.enabled = false;
-			pIntersect.copy(intersects[0].point);
-			plane.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
-			shift.subVectors(intersects[0].object.position, intersects[0].point);
-			isDragging = true;
-			dragObject = intersects[0].object;
-          getDistance()
-        }
+            controls.enabled = false;
+            pIntersect.copy(intersects[0].point);
+            plane.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
+            shift.subVectors(intersects[0].object.position, intersects[0].point);
+            isDragging = true;
+            for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
+        getDistance()
+        drawCurves()
+    }
+
 } );
 document.addEventListener("pointerup", () => {
 	isDragging = false;
-	dragObject = null;
+	// dragObject = null;
+    dragIdx = null;
 	controls.enabled = true;
+    clearCurves()
 } );
 
 

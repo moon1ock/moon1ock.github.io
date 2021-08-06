@@ -416,7 +416,8 @@ document.addEventListener("pointermove", event => {
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         changeColors();
         haversine();
-        if (frame == 0) drawCurves();
+        // if (frame == 0) 
+        drawCurves();
 	}
  }
 );
