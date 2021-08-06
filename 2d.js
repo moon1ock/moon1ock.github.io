@@ -10,7 +10,7 @@ document.body.appendChild(renderer.domElement);
 
 var controls = new MapControls(camera, renderer.domElement);
 
-scene.add(new THREE.GridHelper(90, 180, 0x121212, 0x121212 ));
+scene.add(new THREE.GridHelper(90, 180, 0x202020, 0x202020 ));
 
 
 
