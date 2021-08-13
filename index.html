@@ -5,74 +5,12 @@
     <link rel="icon" type="image/svg+xml" href="img/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flat Earth Debunk</title>
-    <style>
-      body{
-        position: relative;
-        margin:0;
-      }
-      .sidebar {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        overflow-x: hidden;
-        transition: 0.3s;
-        padding-top: 60px;
-        color: white;
-        }
-        
-        .sidebar div {
-        padding: 5px 5px 5px 10px;
-        font-size: 15px;
-        display: block;
-        transition: 0.5s;
-        cursor: pointer;
-        }
-        
-        .sidebar .closebtn {
-        position: absolute;
-        top: 0px;
-        right: 25px;
-        font-size: 36px;
-        }
-        .closebtn:hover {
-          transition: 0.15s;
-          transform:scale(1.5,1.5);
-          -webkit-transform:scale(1.3,1.3);
-          -moz-transform:scale(1.3,1.3);
-          }
-
-        .buttonContrainer{
-          position: relative;
-          width: 100%;
-          height: 100%;
-        }
-        #LogoBtn{
-          color:white;
-          margin:0;
-          font-size: 55px;
-          top: 50%;
-          -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
-          left: 5px;
-          transition: 0.15s;
-          position: absolute;
-        }
-        #LogoBtn:hover{
-          font-size: 80px;
-          top: 50%;
-          -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
-          left: 3px;
-          position: absolute;
-          cursor: help;
-        }
-
-
-    </style>
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
+
+
+    <!-- Sidebar -->
     <div id="mySidebar" class="sidebar">
       <div class="closebtn" onclick="closeNav()">×</div>
       <div id = "loc"></div>
@@ -87,33 +25,26 @@
       <div id = "8"></div>
       <div id = "9"></div>
       <div id = "10"></div>
-     </div>
-
-    <!-- <script type="module" src="/main.js"></script> -->
+    </div>
     <div class = "buttonContainer">
-      <!-- <img id="LogoBtn" src="./img/arrow.png" onclick="openNav()" alt=""> -->
       <div id="LogoBtn" onclick="openNav()">〉</div>
+    </div>
+    <script type="text/javascript" src="js/sidebar.js"></script>
+
+
+    <div class="totalError" id = "totalErrorColor">
+
+        <h2 style="margin-top: 0;">Total error: <div style="display: inline" id = 'totalError'>0</div> km</h2>
 
     </div>
-    
-    <script>
-      function openNav() {
-        document.getElementById("mySidebar").style.width = "180px";
-        document.getElementById('LogoBtn').style.display = "none"
-      }
-      
-      function closeNav() {
-        document.getElementById("mySidebar").style.width = "0";
-        document.getElementById('LogoBtn').style.display = "inline"
 
-      }
-    </script>
+    <!-- Window Resizing Adapt -->
     <script src="js/THREEx.WindowResize.js"></script> 
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
 
-    <!--<script type="module" src="./cities.js"></script> clean-->
-    <script type="module" src="./clean.js"></script>
-
+    <script type="module" src="js/clean.js"></script>
+    <!-- <script type="module" src="js/mini.js"></script> -->
 
 
   </body>

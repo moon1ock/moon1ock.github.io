@@ -1,6 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import {atlanta, beijing, cape, delhi, ekaterinburg, florence, goiania,hobart,irkutsk,jakarta, kiev} from './js/coordinates.js'
+import {atlanta, beijing, cape, delhi, easter, florence, goiania,hobart,irkutsk,jakarta, kiev} from './coordinates.js'
 
 
 
@@ -33,14 +33,6 @@ globeGUI.onChange( function(value) {
 });
 top.open()
 ///
-
-
-// SIDE nav
-
-
-
-
-
 
 
 // ///// SETUP Functions ////
@@ -199,9 +191,7 @@ function makeTextSprite( message, parameters )
 }
 
 // function for drawing rounded rectangles
-function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath(); ctx.moveTo(x+r, y);ctx.lineTo(x+w-r, y);ctx.quadraticCurveTo(x+w, y, x+w, y+r);ctx.lineTo(x+w, y+h-r);ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);ctx.lineTo(x+r, y+h);ctx.quadraticCurveTo(x, y+h, x, y+h-r);ctx.lineTo(x, y+r);ctx.quadraticCurveTo(x, y, x+r, y);ctx.closePath(); ctx.fill(); ctx.stroke();   
-}
+function roundRect(ctx, x, y, w, h, r) {ctx.beginPath(); ctx.moveTo(x+r, y);ctx.lineTo(x+w-r, y);ctx.quadraticCurveTo(x+w, y, x+w, y+r);ctx.lineTo(x+w, y+h-r);ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);ctx.lineTo(x+r, y+h);ctx.quadraticCurveTo(x, y+h, x, y+h-r);ctx.lineTo(x, y+r);ctx.quadraticCurveTo(x, y, x+r, y);ctx.closePath(); ctx.fill(); ctx.stroke();   }
 
 function generateLabel(city){
     return makeTextSprite( city.name, { fontsize: 80, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
@@ -232,10 +222,22 @@ function convertPolarToAng(pos){
 
 // scatter cities around a bit when generating
 function sca(){
-    // return 0;
+    return 0;
     return Math.random()*12-6;
 }
 const EarthR = 6371e3;
+
+// calculate the Total error
+
+function totalError(){
+    var delta = 0;
+    for (let i = 0; i<deltaDistances.length;i++){
+        for(let j = 0; j < deltaDistances.length; j++){
+            delta += Math.abs(deltaDistances[i][j]);
+        }
+    }
+    return  Math.round((delta/2)*100)/100;
+}
 
 
 // calculate the distance between the cities
@@ -243,7 +245,6 @@ function haversine(){
     var home = convertPolarToAng(cities[dragIdx].position);
     document.getElementById('loc').innerHTML = "lat:" + (Math.round(home.lat*100)/100).toString() + " lon:" +  (Math.round(home.lon*100)/100).toString()
     for (var i = 0; i<cities.length; i++){
-        // if (i == dragIdx){continue}
         var away =  convertPolarToAng(cities[i].position);
         var φ1 = home.lat * Math.PI/180; 
         var φ2 = away.lat * Math.PI/180;
@@ -253,43 +254,40 @@ function haversine(){
                Math.cos(φ1) * Math.cos(φ2) *
                Math.sin(Δλ/2) * Math.sin(Δλ/2);
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        var d = EarthR * c; // in metres
-        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ (Math.round(d/10)/100).toString() + "km";
+        var d = Math.round(EarthR * c/10)/100; // in metres
+
+        // UPDATE THE DISTANCES TABLE
+        currDistance[dragIdx][i] = d;
+        currDistance[i][dragIdx] = d;
+        deltaDistances[dragIdx][i]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
+        deltaDistances[i][dragIdx]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
+        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ d.toString() + " km <br/> &nbsp;&nbsp; delta: " + (Math.round(deltaDistances[i][dragIdx]*100)/100).toString();
+        
     }
+    var err = totalError();
+    document.getElementById('totalError').innerHTML = err.toString();
+    if (err < 1100){
+        document.getElementById('totalErrorColor').style.color = "lightgreen";
+        document.getElementById('totalErrorColor').style.textShadow = "0 0 10px greenyellow,0 0 20px darkgreen,0 0 40px darkcyan, 0 0 80px green";
+
+    }
+    else{
+        document.getElementById('totalErrorColor').style.color = "coral";
+        document.getElementById('totalErrorColor').style.textShadow = "0 0 10px gold,0 0 20px firebrick,0 0 40px pink,0 0 80px red";
+
+    }
+
 
 }
 
 
 function changeColors(){
-    // this can be all removed to [drag idx][true position]
-    let factual;
-    if (dragIdx == 0){
-        factual = atlanta
-    }
-    else if (dragIdx == 1){
-        factual = beijing;
-    }
-    else if (dragIdx == 2){
-        factual = cape;
-    }
-    else if (dragIdx == 3){
-        factual = delhi;
-    }
-    else if (dragIdx == 4){
-        factual = ekaterinburg;
-    }
-    else if (dragIdx == 5){
-        factual = florence;
-    }
-    else if (dragIdx == 6){
-        factual = goiania;
-    }
-    else if (dragIdx == 7){
-        factual = hobart;
-    }
+
+    let factual = truePosition[dragIdx]
 
     let curr = convertPolarToAng(cities[dragIdx].position);
-
+    // keep an array to remove this overhead
+    // and check for true distances
     if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.8){
         cities[dragIdx].material.color.setHex(0x00AB08);
         cities[dragIdx].children[0].material.color.setHex(0x59ff4f); 
@@ -300,29 +298,72 @@ function changeColors(){
 }
 
 /// Create the cities ///
-generateCity('A',convertCoordsRad(atlanta.lat+sca(), atlanta.lon+sca())) 
-generateCity('B',convertCoordsRad(beijing.lat+sca(), beijing.lon+sca())) 
-generateCity('C',convertCoordsRad(cape.lat+sca(), cape.lon+sca())) 
-generateCity('D',convertCoordsRad(delhi.lat+sca(), delhi.lon+sca())) 
-generateCity('E',convertCoordsRad(ekaterinburg.lat+sca(), ekaterinburg.lon+sca())) 
-generateCity('F',convertCoordsRad(florence.lat+sca(), florence.lon+sca())) 
-generateCity('G',convertCoordsRad(goiania.lat+sca(), goiania.lon+sca())) 
-generateCity('H',convertCoordsRad(hobart.lat+sca(), hobart.lon+sca())) 
-// generateCity('I',convertCoordsRad(irkutsk.lat+sca(), irkutsk.lon+sca())) 
-// generateCity('J',convertCoordsRad(jakarta.lat+sca(), jakarta.lon+sca())) 
-// generateCity('K',convertCoordsRad(kiev.lat+sca(), kiev.lon+sca())) 
 
+// import cities into array, call them with a for loop
 
+let truePosition = [atlanta,beijing, cape, delhi, easter, florence, goiania, hobart];
 
-
-
-
+for (let i=0; i<truePosition.length; i++){
+    generateCity(
+        String.fromCharCode(65+i),
+        convertCoordsRad(truePosition[i].lat+sca(), truePosition[i].lon+sca())
+    )
+}
 for (let i =0; i<cities.length; i++){
     scene.add(cities[i])
+}
 
+// Generate the TRUE distances
+let trueDistance = [];
+for (let i = 0; i<truePosition.length; i++){
+    trueDistance.push([])
+    for(let j = 0 ; j<truePosition.length; j++){
+        var φ1 = truePosition[i].lat * Math.PI/180; 
+        var φ2 = truePosition[j].lat * Math.PI/180;
+        var Δφ = ( truePosition[j].lat-truePosition[i].lat) * Math.PI/180;
+        var Δλ = ( truePosition[j].lon-truePosition[i].lon) * Math.PI/180;
+        var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+               Math.cos(φ1) * Math.cos(φ2) *
+               Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = EarthR * c; // in metres
+        trueDistance[i].push( Math.round(d/10)/100)
+    }
 }
 
 
+// store the current distances
+let currDistance = [];
+for (let i =0; i<cities.length; i++){
+    var home = convertPolarToAng(cities[i].position);
+    currDistance.push([])
+    for(let j = 0 ; j<cities.length; j++){
+        var away =  convertPolarToAng(cities[j].position);
+        var φ1 = home.lat * Math.PI/180; 
+        var φ2 = away.lat * Math.PI/180;
+        var Δφ = (away.lat-home.lat) * Math.PI/180;
+        var Δλ = (away.lon-home.lon) * Math.PI/180;
+        var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = EarthR * c; // in metres
+        currDistance[i].push( Math.round(d/10)/100)
+    }
+}
+
+// store the deltas
+let deltaDistances = []
+for (let i=0; i<currDistance.length;i++){
+    deltaDistances.push([])
+    for( let j = 0; j <trueDistance.length;j++){
+        deltaDistances[i].push(
+                currDistance[i][j] - trueDistance[i][j] 
+        )
+    }
+}
+// populate total error for the first time
+document.getElementById('totalError').innerHTML = totalError().toString();
 
 
 ////// Spider Webs between points ////
@@ -331,6 +372,8 @@ let dest = new THREE.Vector3();
 let points = [];
 let mid = new THREE.Vector3();
 let curve_meshes = [];
+
+
 
 function drawCurves(){
 	clearCurves()
@@ -368,17 +411,16 @@ function drawCurves(){
 			
 		}
 
-
-		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc})));
-
+		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0xff8400})));
 	}
 	for (let i = 0; i<curve_meshes.length;i++){
 		scene.add(curve_meshes[i])
 	}
 }
 
-function clearCurves(){
 
+
+function clearCurves(){
 	for (let i = 0; i<curve_meshes.length;i++){
 		scene.remove(curve_meshes[i])
 		curve_meshes[i].material.dispose()
@@ -410,6 +452,9 @@ document.addEventListener("pointermove", event => {
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     // save mouse here
+
+    // add a drag-hover effect
+    // show up the name on hover
     if (isDragging) {
 		raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
@@ -434,6 +479,7 @@ document.addEventListener("pointerdown", () => {
 		isDragging = true; 
         for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
         drawCurves();
+        haversine();
 	}
 } );
 
@@ -469,4 +515,6 @@ animate()
 
 
 https://getbootstrap.com/docs/4.0/components/dropdowns/
+
+add bootstrap tooltip for switching to 2d
 */

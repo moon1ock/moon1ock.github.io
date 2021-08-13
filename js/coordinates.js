@@ -25,9 +25,9 @@ export var delhi = {
     lon: 77.216721
 }
 
-export var ekaterinburg = {
-    lat:  56.833332,
-    lon: 60.583332
+export var easter = {
+    lat:  -27.104671,
+    lon: -109.360481
 }
 
 export var florence = {
