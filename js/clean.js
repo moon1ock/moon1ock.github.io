@@ -31,7 +31,7 @@ globeGUI.onChange( function(value) {
 	if (value) scene.add(sphere)
 	else scene.remove(sphere)
 });
-top.open()
+
 ///
 
 
@@ -222,8 +222,7 @@ function convertPolarToAng(pos){
 
 // scatter cities around a bit when generating
 function sca(){
-    return 0;
-    return Math.random()*12-6;
+    return Math.random()*16-8;
 }
 const EarthR = 6371e3;
 
@@ -266,7 +265,7 @@ function haversine(){
     }
     var err = totalError();
     document.getElementById('totalError').innerHTML = err.toString();
-    if (err < 1100){
+    if (err < 1180){
         document.getElementById('totalErrorColor').style.color = "lightgreen";
         document.getElementById('totalErrorColor').style.textShadow = "0 0 10px greenyellow,0 0 20px darkgreen,0 0 40px darkcyan, 0 0 80px green";
 
@@ -410,8 +409,9 @@ function drawCurves(){
 			points.push(p);
 			
 		}
+        var green = Math.abs(deltaDistances[dragIdx][i]) < 100 ? true: false;
+        curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: green?0x3acabb:0xff8400})));
 
-		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0xff8400})));
 	}
 	for (let i = 0; i<curve_meshes.length;i++){
 		scene.add(curve_meshes[i])
@@ -478,8 +478,8 @@ document.addEventListener("pointerdown", () => {
 		controls.enabled = false;
 		isDragging = true; 
         for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
-        drawCurves();
         haversine();
+        drawCurves();
 	}
 } );
 
