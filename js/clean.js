@@ -398,7 +398,6 @@ function drawCurves(){
 			p.normalize()
 			p.multiplyScalar(30)
 			points.push(p);
-			
 		}
 		
 		for (let i =0; i<=12; i++){
@@ -444,7 +443,7 @@ var raySphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0) ,  30);
 var raySphereIntersect = new THREE.Vector3(); // point of intersection with the plane
 var shift = new THREE.Vector3(); // distance between position of an object and points of intersection with the object
 var isDragging = false;
-var dragIdx;
+var dragIdx = 0;
 rayCities.push(sphere)
 
 document.addEventListener("pointermove", event => {
@@ -493,6 +492,22 @@ document.addEventListener("pointerup", () => {
 } );
 
 
+
+document.getElementById("solveBtn").addEventListener("click", () => {
+    console.log("Cmmon, you could have tried harder!");
+    for (let i = 0; i<cities.length; i++){
+        dragIdx = i;
+        var realPosition = convertCoordsRad(truePosition[i].lat, truePosition[i].lon)
+        cities[i].position.set(
+            realPosition.x,
+            realPosition.y,
+            realPosition.z
+        )
+        haversine();
+        changeColors();
+    }
+    dragIdx = null;
+});
 
 
 
