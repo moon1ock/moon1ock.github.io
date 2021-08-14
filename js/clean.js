@@ -222,7 +222,9 @@ function convertPolarToAng(pos){
 
 // scatter cities around a bit when generating
 function sca(){
-    return Math.random()*16-8;
+  
+    return Math.random()*50-25;
+  
 }
 const EarthR = 6371e3;
 
@@ -265,7 +267,7 @@ function haversine(){
     }
     var err = totalError();
     document.getElementById('totalError').innerHTML = err.toString();
-    if (err < 1180){
+    if (err < 400){
         document.getElementById('totalErrorColor').style.color = "lightgreen";
         document.getElementById('totalErrorColor').style.textShadow = "0 0 10px greenyellow,0 0 20px darkgreen,0 0 40px darkcyan, 0 0 80px green";
 
@@ -287,10 +289,16 @@ function changeColors(){
     let curr = convertPolarToAng(cities[dragIdx].position);
     // keep an array to remove this overhead
     // and check for true distances
-    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.8){
-        cities[dragIdx].material.color.setHex(0x00AB08);
-        cities[dragIdx].children[0].material.color.setHex(0x59ff4f); 
+    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.45){
 
+        cities[dragIdx].position.set(
+            trueLocationAng[dragIdx].x,
+            trueLocationAng[dragIdx].y,
+            trueLocationAng[dragIdx].z
+        )
+
+        cities[dragIdx].material.color.setHex(0x00AB08);
+        cities[dragIdx].children[0].material.color.setHex(0x59ff4f);                                                                                                                                                                                         
     }
     else{ cities[dragIdx].material.color.setHex(0xff0000);cities[dragIdx].children[0].material.color.setHex(0xFFFFFF) }
     return
@@ -301,12 +309,13 @@ function changeColors(){
 // import cities into array, call them with a for loop
 
 let truePosition = [atlanta,beijing, cape, delhi, easter, florence, goiania, hobart];
-
+let trueLocationAng = []
 for (let i=0; i<truePosition.length; i++){
     generateCity(
         String.fromCharCode(65+i),
         convertCoordsRad(truePosition[i].lat+sca(), truePosition[i].lon+sca())
     )
+    trueLocationAng.push(  convertCoordsRad(truePosition[i].lat, truePosition[i].lon) )
 }
 for (let i =0; i<cities.length; i++){
     scene.add(cities[i])
@@ -497,11 +506,10 @@ document.getElementById("solveBtn").addEventListener("click", () => {
     console.log("Cmmon, you could have tried harder!");
     for (let i = 0; i<cities.length; i++){
         dragIdx = i;
-        var realPosition = convertCoordsRad(truePosition[i].lat, truePosition[i].lon)
         cities[i].position.set(
-            realPosition.x,
-            realPosition.y,
-            realPosition.z
+            trueLocationAng[i].x,
+            trueLocationAng[i].y,
+            trueLocationAng[i].z
         )
         haversine();
         changeColors();
@@ -532,4 +540,6 @@ animate()
 https://getbootstrap.com/docs/4.0/components/dropdowns/
 
 add bootstrap tooltip for switching to 2d
+
+https://obfuscator.io/
 */
