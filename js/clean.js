@@ -1,6 +1,6 @@
 import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
-import {atlanta, beijing, cape, delhi, easter, florence, goiania,hobart,irkutsk,jakarta, kiev} from './coordinates.js'
+import {atlanta, beijing, cape, delhi, easter, florence, goiania,hobart} from './coordinates.js'
 
 
 
@@ -298,7 +298,7 @@ function changeColors(){
         )
 
         cities[dragIdx].material.color.setHex(0x00AB08);
-        cities[dragIdx].children[0].material.color.setHex(0x59ff4f);                                                                                                                                                                                         
+        cities[dragIdx].children[0].material.color.setHex(0x59ff4f);
     }
     else{ cities[dragIdx].material.color.setHex(0xff0000);cities[dragIdx].children[0].material.color.setHex(0xFFFFFF) }
     return
@@ -309,6 +309,7 @@ function changeColors(){
 // import cities into array, call them with a for loop
 
 let truePosition = [atlanta,beijing, cape, delhi, easter, florence, goiania, hobart];
+
 let trueLocationAng = []
 for (let i=0; i<truePosition.length; i++){
     generateCity(

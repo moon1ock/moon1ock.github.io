@@ -1,8 +1,8 @@
 /**
  * This is just a json-like file for all the cities coordinates.
- * @param {dict} city has lat and lon taken from the Google Maps API 
- * 
- * 
+ * @param {dict} city has lat and lon taken from the Google Maps API
+ *
+ *
 */
 
 export var atlanta = {
