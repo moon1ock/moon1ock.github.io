@@ -28,7 +28,7 @@ let stars, earthImage;
 //// INIT ////
 
 
-scene.add(new THREE.GridHelper(160, 320, 0x222222, 0x222222 ));
+scene.add(new THREE.GridHelper(160, 320, 0x303030, 0x303030 ));
 //// Let's Create a projection of the Earth onto a plane
 var earthGeom = new THREE.PlaneGeometry(120, 60, 1, 1);
 var earthTexture = new THREE.TextureLoader().load( 'img/globe1.jpg' );
@@ -269,6 +269,40 @@ function clearCurves(){
 
 
 
+//////// DISTANCES ///////////
+
+
+let currDistance = [];
+// for (let i =0; i<cities.length; i++){
+//     var home = convertPolarToAng(cities[i].position);
+//     currDistance.push([])
+//     for(let j = 0 ; j<cities.length; j++){
+//         var away =  convertPolarToAng(cities[j].position);
+//         var φ1 = home.lat * Math.PI/180;
+//         var φ2 = away.lat * Math.PI/180;
+//         var Δφ = (away.lat-home.lat) * Math.PI/180;
+//         var Δλ = (away.lon-home.lon) * Math.PI/180;
+//         var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+//             Math.cos(φ1) * Math.cos(φ2) *
+//             Math.sin(Δλ/2) * Math.sin(Δλ/2);
+//         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+//         var d = EarthR * c; // in metres
+//         currDistance[i].push( Math.round(d/10)/100)
+//     }
+// }
+
+// // store the deltas
+// let deltaDistances = []
+// for (let i=0; i<currDistance.length;i++){
+//     deltaDistances.push([])
+//     for( let j = 0; j <trueDistance.length;j++){
+//         deltaDistances[i].push(
+//                 currDistance[i][j] - trueDistance[i][j]
+//         )
+//     }
+// }
+// // populate total error for the first time
+// document.getElementById('totalError').innerHTML = totalError().toString();
 
 
 
@@ -277,6 +311,13 @@ function clearCurves(){
 
 
 
+
+
+
+
+
+
+/////////////////////////////
 
 
 
@@ -297,12 +338,18 @@ var isDragging = false;
 var dragIdx;
 
 
+let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Florence", "Goiania", "Hobart"]
+
+
+
+
 
 function getDistance(){
 
-    document.getElementById('loc').innerHTML = cities[dragIdx].name
+    document.getElementById('loc').innerHTML = "<h1>" +names[cities[dragIdx].name.charCodeAt(0)-65]+ "</h1>"
+
     for (let i=0; i<cities.length; i++){
-        document.getElementById(i.toString()).innerHTML = cities[dragIdx].name + "->"+cities[i].name+': '+300*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2).toString()
+        document.getElementById(i.toString()).innerHTML = cities[dragIdx].name + "->"+cities[i].name+': '+Math.round(300*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2)).toString() + ' km'
 
     }
 

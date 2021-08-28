@@ -273,7 +273,7 @@ function haversine(){
 
     }
     else{
-        document.getElementById('totalErrorColor').style.color = "coral";
+        document.getElementById('totalErrorColor').style.color = "white";
         document.getElementById('totalErrorColor').style.textShadow = "0 0 10px gold,0 0 20px firebrick,0 0 40px pink,0 0 80px red";
 
     }

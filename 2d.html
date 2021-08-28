@@ -5,22 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
-    <style>
-      body{
-        margin:0;
-        position: relative;
+    <link rel="stylesheet" href="css/style.css">
 
-      }
-
-      .pos{
-        position: fixed;
-        top: 0px;
-        
-        font-size: 20px;
-        color: white;
-      }
-
-    </style>
   </head>
   
   <body>
@@ -38,6 +24,12 @@
         <div id = "9"></div>
         <div id = "10"></div>
     </div>
+    <div class="totalError" id = "totalErrorColor">
+
+      <h2 style="margin-top: 0;">Total error: <div style="display: inline" id = 'totalError'>0</div> km</h2>
+
+  </div>
+
     <div id="app"></div>
     <script src="js/THREEx.WindowResize.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
