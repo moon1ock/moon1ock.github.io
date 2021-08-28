@@ -237,12 +237,15 @@ function totalError(){
             delta += Math.abs(deltaDistances[i][j]);
         }
     }
-    return  Math.round((delta/2)*100)/100;
+    return  Math.round((delta/2));
 }
 
 
 // calculate the distance between the cities
 function haversine(){
+    if (frame!=0){
+        return
+    }
     var home = convertPolarToAng(cities[dragIdx].position);
     document.getElementById('loc').innerHTML = "lat:" + (Math.round(home.lat*100)/100).toString() + " lon:" +  (Math.round(home.lon*100)/100).toString()
     for (var i = 0; i<cities.length; i++){
@@ -267,7 +270,7 @@ function haversine(){
     }
     var err = totalError();
     document.getElementById('totalError').innerHTML = err.toString();
-    if (err < 400){
+    if (err < 20){
         document.getElementById('totalErrorColor').style.color = "lightgreen";
         document.getElementById('totalErrorColor').style.textShadow = "0 0 10px greenyellow,0 0 20px darkgreen,0 0 40px darkcyan, 0 0 80px green";
 
@@ -289,7 +292,7 @@ function changeColors(){
     let curr = convertPolarToAng(cities[dragIdx].position);
     // keep an array to remove this overhead
     // and check for true distances
-    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.45){
+    if (Math.sqrt((factual.lat-curr.lat)**2+(factual.lon-curr.lon)**2) < 0.70){
 
         cities[dragIdx].position.set(
             trueLocationAng[dragIdx].x,
@@ -418,7 +421,7 @@ function drawCurves(){
 			points.push(p);
 
 		}
-        var green = Math.abs(deltaDistances[dragIdx][i]) < 100 ? true: false;
+        var green = Math.abs(deltaDistances[dragIdx][i]) < 70 ? true: false;
         curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: green?0x3acabb:0xff8400})));
 
 	}
@@ -470,7 +473,7 @@ document.addEventListener("pointermove", event => {
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         changeColors();
         haversine();
-        // if (frame == 0)
+
         drawCurves();
 	}
  }
@@ -505,6 +508,7 @@ document.addEventListener("pointerup", () => {
 
 document.getElementById("solveBtn").addEventListener("click", () => {
     console.log("Cmmon, you could have tried harder!");
+    frame = 0;
     for (let i = 0; i<cities.length; i++){
         dragIdx = i;
         cities[i].position.set(
@@ -524,9 +528,9 @@ document.getElementById("solveBtn").addEventListener("click", () => {
 function animate(){
 
 	controls.update() // for damping effect
-    frame = (frame+1)%1;
 	// Star rotation happening here
     rotateStars()
+    frame = (frame+1)%4;
     requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }

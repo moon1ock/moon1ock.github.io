@@ -20,7 +20,10 @@ controls.maxPolarAngle = 1.72;
 var light = new THREE.AmbientLight(0xffffff, 1);
 light.position.setScalar(10);
 scene.add(light);
+let frame = 0;
+
 let stars, earthImage;
+let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Florence", "Goiania", "Hobart"]
 
 
 
@@ -203,7 +206,7 @@ const EarthR = 6371e3;
 for (let i = 0; i<truePosition.length; i++){
     trueDistance.push([])
     for(let j = 0 ; j<truePosition.length; j++){
-        var φ1 = truePosition[i].lat * Math.PI/180; 
+        var φ1 = truePosition[i].lat * Math.PI/180;
         var φ2 = truePosition[j].lat * Math.PI/180;
         var Δφ = ( truePosition[j].lat-truePosition[i].lat) * Math.PI/180;
         var Δλ = ( truePosition[j].lon-truePosition[i].lon) * Math.PI/180;
@@ -217,10 +220,93 @@ for (let i = 0; i<truePosition.length; i++){
 }
 
 
-
 for(let i = 0; i<8; i++){
     createCity(i)
 }
+
+
+
+
+
+//////// DISTANCES ///////////
+
+
+let currDistance = [];
+for (let i =0; i<cities.length; i++){
+    var home = cities[i].position;
+    currDistance.push([])
+
+    for(let j = 0 ; j<cities.length; j++){
+        var away =  cities[j].position;
+		  var d = Math.round(300*Math.sqrt((home.x - away.x)**2 +  (home.z - away.z)**2))
+
+        currDistance[i].push( d)
+    }
+}
+
+
+// // store the deltas
+let deltaDistances = []
+for (let i=0; i<currDistance.length;i++){
+    deltaDistances.push([])
+    for( let j = 0; j <trueDistance.length;j++){
+        deltaDistances[i].push(
+                currDistance[i][j] - trueDistance[i][j]
+        )
+    }
+}
+// // populate total error for the first time
+
+function totalError(){
+	var delta = 0;
+	for (let i = 0; i<deltaDistances.length;i++){
+		 for(let j = 0; j < deltaDistances.length; j++){
+			  delta += Math.abs(deltaDistances[i][j]);
+		 }
+	}
+	return  Math.round((delta/2));
+}
+
+
+document.getElementById('totalError').innerHTML = totalError().toString();
+
+
+
+
+
+
+
+
+
+function getDistance(){
+	if (frame!=0){
+		return
+	}
+	// reformat into get distance and display distance TODO!
+    document.getElementById('loc').innerHTML = "<h1>" +names[cities[dragIdx].name.charCodeAt(0)-65]+ "</h1>"
+
+    for (let i=0; i<cities.length; i++){
+		  var d = Math.round(300*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2))
+		  currDistance[dragIdx][i] = d;
+        currDistance[i][dragIdx] = d;
+        deltaDistances[dragIdx][i]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
+        deltaDistances[i][dragIdx]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
+        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ Math.round(d).toString() + " km <br/> &nbsp;&nbsp; delta: " + (Math.round(deltaDistances[i][dragIdx])).toString();
+		  var err = totalError();
+		  document.getElementById('totalError').innerHTML = err.toString();
+
+		//   document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ d.toString()  + " km <br/> &nbsp;&nbsp; delta: "// + (Math.round(deltaDistances[i][dragIdx]*100)/100).toString();
+
+    }
+
+}
+
+
+
+
+
+
+
 
 
 
@@ -249,7 +335,10 @@ function drawCurves(){
 			points.push(p);
 
 		}
-		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc})));
+		var green = Math.abs(deltaDistances[dragIdx][i]) < 70 ? true: false;
+		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: green?0x3acabb:0xff8400})));
+
+		// curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc})));
 
 	}
 	for (let i = 0; i<curve_meshes.length;i++){
@@ -266,43 +355,6 @@ function clearCurves(){
 	}
 }
 //////////
-
-
-
-//////// DISTANCES ///////////
-
-
-let currDistance = [];
-// for (let i =0; i<cities.length; i++){
-//     var home = convertPolarToAng(cities[i].position);
-//     currDistance.push([])
-//     for(let j = 0 ; j<cities.length; j++){
-//         var away =  convertPolarToAng(cities[j].position);
-//         var φ1 = home.lat * Math.PI/180;
-//         var φ2 = away.lat * Math.PI/180;
-//         var Δφ = (away.lat-home.lat) * Math.PI/180;
-//         var Δλ = (away.lon-home.lon) * Math.PI/180;
-//         var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-//             Math.cos(φ1) * Math.cos(φ2) *
-//             Math.sin(Δλ/2) * Math.sin(Δλ/2);
-//         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-//         var d = EarthR * c; // in metres
-//         currDistance[i].push( Math.round(d/10)/100)
-//     }
-// }
-
-// // store the deltas
-// let deltaDistances = []
-// for (let i=0; i<currDistance.length;i++){
-//     deltaDistances.push([])
-//     for( let j = 0; j <trueDistance.length;j++){
-//         deltaDistances[i].push(
-//                 currDistance[i][j] - trueDistance[i][j]
-//         )
-//     }
-// }
-// // populate total error for the first time
-// document.getElementById('totalError').innerHTML = totalError().toString();
 
 
 
@@ -337,23 +389,6 @@ var moveVector = new THREE.Vector3(0,0,0);
 var isDragging = false;
 var dragIdx;
 
-
-let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Florence", "Goiania", "Hobart"]
-
-
-
-
-
-function getDistance(){
-
-    document.getElementById('loc').innerHTML = "<h1>" +names[cities[dragIdx].name.charCodeAt(0)-65]+ "</h1>"
-
-    for (let i=0; i<cities.length; i++){
-        document.getElementById(i.toString()).innerHTML = cities[dragIdx].name + "->"+cities[i].name+': '+Math.round(300*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2)).toString() + ' km'
-
-    }
-
-}
 
 
 // events
@@ -435,7 +470,7 @@ document.addEventListener("pointerup", () => {
 
 renderer.setAnimationLoop(() => {
 	rotateStars()
-
+	frame = (frame+1)%4
   renderer.render(scene, camera);
 
 })
