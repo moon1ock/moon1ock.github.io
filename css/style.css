@@ -98,6 +98,11 @@ body{
   right: 0;
   bottom: 0;
 }
+#switchBtn{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
 
 
 
