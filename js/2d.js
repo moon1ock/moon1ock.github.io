@@ -10,47 +10,30 @@ import {atlanta, beijing, cape, delhi, easter, florence, goiania,hobart} from '.
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
 camera.position.set(-30, 40, 0);
-
 camera.lookAt(scene.position);
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
-
 var controls = new MapControls(camera, renderer.domElement);
-
 controls.maxPolarAngle = 1.72;
-
-scene.add(new THREE.GridHelper(160, 320, 0x222222, 0x222222 ));
-
-
-
-
-//// Let's Create a projection of the Earth onto a plane
-// var earthTex = new THREE.PlaneGeometry(60,20,1,1);
-// var loader = new THREE.TextureLoader()
-
-// var earthMaterial = new THREE.MeshBasicMaterial({map: loader.load('img/globe1.jpg')});
-
-// var earthPlane = new THREE.Mesh(earthTex, earthMaterial)
-
-
-// earthPlane.position.set(0,0,0)
-// scene.add(earthPlane)
-// console.log(earthPlane);
-
-
-
+/// Light to see the world map
 var light = new THREE.AmbientLight(0xffffff, 1);
 light.position.setScalar(10);
 scene.add(light);
+let stars, earthImage;
 
 
 
 
+//// INIT ////
+
+
+scene.add(new THREE.GridHelper(160, 320, 0x222222, 0x222222 ));
+//// Let's Create a projection of the Earth onto a plane
 var earthGeom = new THREE.PlaneGeometry(120, 60, 1, 1);
 var earthTexture = new THREE.TextureLoader().load( 'img/globe1.jpg' );
 var earthMaterial = new THREE.MeshLambertMaterial( { map: earthTexture } );
-var earthImage = new THREE.Mesh(earthGeom, earthMaterial);
+earthImage = new THREE.Mesh(earthGeom, earthMaterial);
 earthImage.receiveShadow = true;
 // rotate and position the plane
 earthImage.rotation.x = -0.5 * Math.PI;
@@ -59,6 +42,55 @@ earthImage.rotation.z = -0.5 * Math.PI;
 earthImage.position.set(0,0,0);
 // add the plane to the scene
 scene.add(earthImage);
+
+// Resize
+THREEx.WindowResize(renderer, camera);
+ // Stars
+
+
+
+// DEBUG //
+const gui = new dat.GUI()
+const world = {
+	earthMap: true,
+	stars: true
+}
+var top = gui.addFolder('Basic Config');
+var starsGUI = top.add( world, 'stars' ).name("Show Stars").listen();
+starsGUI.onChange( function(value) {
+	if (value) scene.add(stars)
+	else scene.remove(stars)
+});
+var globeGUI = top.add( world, 'earthMap' ).name("Show Earth Map").listen();
+globeGUI.onChange( function(value) {
+	if (value) scene.add(earthImage)
+	else scene.remove(earthImage)
+});
+
+
+function genStars(){
+	const starGeometry = new THREE.BufferGeometry();
+	const starMaterial = new THREE.PointsMaterial({color: 0xffffff});
+	const starVerticies = [];
+	for (let i = 0; i<50000; i++){
+		const x = (Math.random() -0.5)*1000;
+		const y =  (Math.random() -0.5)*1000;
+		const z = (Math.random()-0.5)*1000;;
+		if(x*x+y*y+z*z > 120000) starVerticies.push(x,y,z);
+	}
+
+	starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVerticies, 3));
+	stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+}
+function rotateStars(){
+    stars.rotation.x+=0.0001;
+	stars.rotation.y+=0.0001;
+}
+genStars();
+
+
 
 
 
@@ -131,7 +163,7 @@ function makeTextSprite( message, parameters )
 
 
 
-// New York
+
 ////////////////////
 
 
@@ -277,14 +309,6 @@ function getDistance(){
 }
 
 
-function checkBorders(){
-
-
-
-	return true;
-}
-
-
 // events
 document.addEventListener("pointermove", event => {
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -363,6 +387,8 @@ document.addEventListener("pointerup", () => {
 
 
 renderer.setAnimationLoop(() => {
+	rotateStars()
+
   renderer.render(scene, camera);
 
 })

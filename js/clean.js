@@ -223,7 +223,7 @@ function convertPolarToAng(pos){
 // scatter cities around a bit when generating
 function sca(){
 
-    return Math.random()*50-25;
+    return Math.random()*26-18;
 
 }
 const EarthR = 6371e3;
