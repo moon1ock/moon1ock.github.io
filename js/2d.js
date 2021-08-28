@@ -9,7 +9,7 @@ import {atlanta, beijing, cape, delhi, easter, florence, goiania,hobart} from '.
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
-camera.position.set(-30, 25, 0);
+camera.position.set(-30, 40, 0);
 
 camera.lookAt(scene.position);
 var renderer = new THREE.WebGLRenderer({antialias: true});
@@ -20,7 +20,46 @@ var controls = new MapControls(camera, renderer.domElement);
 
 controls.maxPolarAngle = 1.72;
 
-scene.add(new THREE.GridHelper(110, 220, 0x222222, 0x222222 ));
+scene.add(new THREE.GridHelper(160, 320, 0x222222, 0x222222 ));
+
+
+
+
+//// Let's Create a projection of the Earth onto a plane
+// var earthTex = new THREE.PlaneGeometry(60,20,1,1);
+// var loader = new THREE.TextureLoader()
+
+// var earthMaterial = new THREE.MeshBasicMaterial({map: loader.load('img/globe1.jpg')});
+
+// var earthPlane = new THREE.Mesh(earthTex, earthMaterial)
+
+
+// earthPlane.position.set(0,0,0)
+// scene.add(earthPlane)
+// console.log(earthPlane);
+
+
+
+var light = new THREE.AmbientLight(0xffffff, 1);
+light.position.setScalar(10);
+scene.add(light);
+
+
+
+
+var earthGeom = new THREE.PlaneGeometry(120, 60, 1, 1);
+var earthTexture = new THREE.TextureLoader().load( 'img/globe1.jpg' );
+var earthMaterial = new THREE.MeshLambertMaterial( { map: earthTexture } );
+var earthImage = new THREE.Mesh(earthGeom, earthMaterial);
+earthImage.receiveShadow = true;
+// rotate and position the plane
+earthImage.rotation.x = -0.5 * Math.PI;
+earthImage.rotation.z = -0.5 * Math.PI;
+
+earthImage.position.set(0,0,0);
+// add the plane to the scene
+scene.add(earthImage);
+
 
 
 
@@ -102,17 +141,16 @@ function createCity(i){
     var cityGeom = new THREE.ConeBufferGeometry(0.4,0.4 ,6); // 0.4 is height
     cityGeom.translate(0, 0.4 * 0.5, 0); // 0.4 is height
 
-    var cityCone = new THREE.Mesh(cityGeom, new THREE.MeshBasicMaterial({color: "blue"}));
+    var cityCone = new THREE.Mesh(cityGeom, new THREE.MeshBasicMaterial({color: "#DE1738"}));
     scene.add(cityCone);
     var cityEdgesGeom = new THREE.EdgesGeometry(cityGeom);
-    var cityEdges = new THREE.LineSegments(cityEdgesGeom, new THREE.LineBasicMaterial({color: "red"}));
+    var cityEdges = new THREE.LineSegments(cityEdgesGeom, new THREE.LineBasicMaterial({color: "black"}));
     cityCone.add(cityEdges);
 
     cityCone.name = String.fromCharCode(65+i);
     let label = makeTextSprite( cityCone.name, { fontsize: 60, borderColor: {r:225, g:0, b:0, a:1.0}, backgroundColor: {r:225, g:140, b:0, a:0.9} } );
     cityCone.add(label)
 	 cityCone.position.set(truePosition[i].lat/3, 0 ,truePosition[i].lon/3)
-	console.log(cityCone.position);
     cities.push(cityCone)
 }
 
@@ -145,6 +183,7 @@ for (let i = 0; i<truePosition.length; i++){
         trueDistance[i].push( Math.round(d/10)/100)
     }
 }
+
 
 
 for(let i = 0; i<8; i++){
@@ -221,6 +260,7 @@ var pNormal = new THREE.Vector3(0, 1, 0); // plane's normal
 var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
 var pIntersect = new THREE.Vector3(); // point of intersection with an object (plane's point)
 var shift = new THREE.Vector3(0,0,0); // distance between position of an object and points of intersection with the object
+var moveVector = new THREE.Vector3(0,0,0);
 var isDragging = false;
 var dragIdx;
 
@@ -236,6 +276,13 @@ function getDistance(){
 
 }
 
+
+function checkBorders(){
+
+
+
+	return true;
+}
 
 
 // events
@@ -262,7 +309,20 @@ document.addEventListener("pointermove", event => {
     if (isDragging) {
 
         raycaster.ray.intersectPlane(plane, planeIntersect);
-        cities[dragIdx].position.addVectors(planeIntersect, shift);
+		  moveVector.addVectors(planeIntersect, shift);
+			if (moveVector.x > 80){
+				moveVector.x = 80
+			}
+			else if (moveVector.x < -80){
+			moveVector.x = -80
+			}
+			if (moveVector.z > 80){
+			moveVector.z = 80
+			}
+			else if (moveVector.z < -80){
+				moveVector.z = -80
+					}
+        cities[dragIdx].position.set(moveVector.x,0,moveVector.z)
         getDistance()
         drawCurves()
 

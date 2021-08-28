@@ -22,7 +22,7 @@ const world = {
 }
 var top = gui.addFolder('Basic Config');
 var starsGUI = top.add( world, 'stars' ).name("Show Stars").listen();
-starsGUI.onChange( function(value) { 
+starsGUI.onChange( function(value) {
 	if (value) scene.add(stars)
 	else scene.remove(stars)
 });
@@ -54,7 +54,7 @@ function init(){
     THREEx.WindowResize(renderer, camera);
     // Orbit Controls
     controls = new OrbitControls( camera, renderer.domElement );
- 
+
     controls.enablePan = false;
     controls.enableDamping = true;
     controls.dampingFactor = 0.075;
@@ -120,7 +120,7 @@ let cities = [];
 let rayCities = []; // just an array to store for RayCaster, don't modify
 // create a city with `x-y-z` coordinates
 function generateCity(name,coords){
-   
+
     const point = new THREE.Mesh(
         new THREE.SphereBufferGeometry(0.25,21,21),
         new THREE.MeshBasicMaterial({
@@ -132,36 +132,36 @@ function generateCity(name,coords){
     cities.push(point)
     rayCities.push(point)
     point.add(generateLabel(point))
-    
+
 }
 
 function makeTextSprite( message, parameters )
 {
 	if ( parameters === undefined ) parameters = {};
-	
-	var fontface = parameters.hasOwnProperty("fontface") ? 
+
+	var fontface = parameters.hasOwnProperty("fontface") ?
 		parameters["fontface"] : "Arial";
-	
-	var fontsize = parameters.hasOwnProperty("fontsize") ? 
+
+	var fontsize = parameters.hasOwnProperty("fontsize") ?
 		parameters["fontsize"] : 18;
-	
-	var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
+
+	var borderThickness = parameters.hasOwnProperty("borderThickness") ?
 		parameters["borderThickness"] : 4;
-	
+
 	var borderColor = parameters.hasOwnProperty("borderColor") ?
 		parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
-	
+
 	var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
 		parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
 
 	var canvas = document.createElement('canvas');
 	var context = canvas.getContext('2d');
 	context.font = "Bold " + fontsize + "px " + fontface;
-    
+
 	// get size data (height depends only on font size)
 	var metrics = context.measureText( message );
 	var textWidth = metrics.width;
-	
+
 	// background color
 	context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
 								  + backgroundColor.b + "," + backgroundColor.a + ")";
@@ -172,14 +172,14 @@ function makeTextSprite( message, parameters )
 	context.lineWidth = borderThickness;
 	roundRect(context, borderThickness/2+50, borderThickness/2, textWidth + borderThickness, fontsize * 1.2 + borderThickness, 19);
 	// 1.4 is extra height factor for text below baseline: g,j,p,q.
-	
+
 	// text color
 	context.fillStyle = "rgba(0, 0, 0, 1.0)";
 
 	context.fillText( message, borderThickness+50, fontsize + borderThickness);
-	
+
 	// canvas contents will be used for a texture
-	var texture = new THREE.Texture(canvas) 
+	var texture = new THREE.Texture(canvas)
 	texture.needsUpdate = true;
 
 	var spriteMaterial = new THREE.SpriteMaterial( { map: texture} );
@@ -187,7 +187,7 @@ function makeTextSprite( message, parameters )
 	sprite.scale.set(5,2,6.0);
 	spriteMaterial.depthTest = false;
 
-	return sprite;	
+	return sprite;
 }
 
 // function for drawing rounded rectangles
@@ -215,16 +215,16 @@ function convertPolarToAng(pos){
     */
     var lat = Math.asin(pos.y / 30)*(180/Math.PI) ;
     var lon = -1*Math.atan2(pos.z, pos.x)*(180/Math.PI);
-    	
+
     return {lat, lon}
 }
 
 
 // scatter cities around a bit when generating
 function sca(){
-  
+
     return Math.random()*50-25;
-  
+
 }
 const EarthR = 6371e3;
 
@@ -247,7 +247,7 @@ function haversine(){
     document.getElementById('loc').innerHTML = "lat:" + (Math.round(home.lat*100)/100).toString() + " lon:" +  (Math.round(home.lon*100)/100).toString()
     for (var i = 0; i<cities.length; i++){
         var away =  convertPolarToAng(cities[i].position);
-        var φ1 = home.lat * Math.PI/180; 
+        var φ1 = home.lat * Math.PI/180;
         var φ2 = away.lat * Math.PI/180;
         var Δφ = (away.lat-home.lat) * Math.PI/180;
         var Δλ = (away.lon-home.lon) * Math.PI/180;
@@ -263,7 +263,7 @@ function haversine(){
         deltaDistances[dragIdx][i]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
         deltaDistances[i][dragIdx]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
         document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ d.toString() + " km <br/> &nbsp;&nbsp; delta: " + (Math.round(deltaDistances[i][dragIdx]*100)/100).toString();
-        
+
     }
     var err = totalError();
     document.getElementById('totalError').innerHTML = err.toString();
@@ -327,7 +327,7 @@ let trueDistance = [];
 for (let i = 0; i<truePosition.length; i++){
     trueDistance.push([])
     for(let j = 0 ; j<truePosition.length; j++){
-        var φ1 = truePosition[i].lat * Math.PI/180; 
+        var φ1 = truePosition[i].lat * Math.PI/180;
         var φ2 = truePosition[j].lat * Math.PI/180;
         var Δφ = ( truePosition[j].lat-truePosition[i].lat) * Math.PI/180;
         var Δλ = ( truePosition[j].lon-truePosition[i].lon) * Math.PI/180;
@@ -348,7 +348,7 @@ for (let i =0; i<cities.length; i++){
     currDistance.push([])
     for(let j = 0 ; j<cities.length; j++){
         var away =  convertPolarToAng(cities[j].position);
-        var φ1 = home.lat * Math.PI/180; 
+        var φ1 = home.lat * Math.PI/180;
         var φ2 = away.lat * Math.PI/180;
         var Δφ = (away.lat-home.lat) * Math.PI/180;
         var Δλ = (away.lon-home.lon) * Math.PI/180;
@@ -367,7 +367,7 @@ for (let i=0; i<currDistance.length;i++){
     deltaDistances.push([])
     for( let j = 0; j <trueDistance.length;j++){
         deltaDistances[i].push(
-                currDistance[i][j] - trueDistance[i][j] 
+                currDistance[i][j] - trueDistance[i][j]
         )
     }
 }
@@ -400,7 +400,7 @@ function drawCurves(){
 		mid.multiplyScalar(0.5);
 		mid.normalize()
 		mid.multiplyScalar(30);
-		
+
 		// interpolate base-> mid
 		for (let i =0; i<=12; i++){
 			let p = new THREE.Vector3().lerpVectors(base,mid,i/12);
@@ -409,14 +409,14 @@ function drawCurves(){
 			p.multiplyScalar(30)
 			points.push(p);
 		}
-		
+
 		for (let i =0; i<=12; i++){
 			let p = new THREE.Vector3().lerpVectors(mid,dest,i/12);
 			p.multiplyScalar(0.5)
 			p.normalize()
 			p.multiplyScalar(30)
 			points.push(p);
-			
+
 		}
         var green = Math.abs(deltaDistances[dragIdx][i]) < 100 ? true: false;
         curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: green?0x3acabb:0xff8400})));
@@ -470,7 +470,7 @@ document.addEventListener("pointermove", event => {
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         changeColors();
         haversine();
-        // if (frame == 0) 
+        // if (frame == 0)
         drawCurves();
 	}
  }
@@ -478,14 +478,14 @@ document.addEventListener("pointermove", event => {
 
 
 document.addEventListener("pointerdown", () => {
-    
+
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(rayCities);
 	if (intersects.length > 0 && intersects[0].object == sphere) {  return }// check if the shpere is intersected before the points are, and return in this case
 	raycaster.ray.intersectSphere(raySphere, raySphereIntersect); // get base position for later shift
 	if (intersects.length > 0) {
 		controls.enabled = false;
-		isDragging = true; 
+		isDragging = true;
         for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
         haversine();
         drawCurves();
