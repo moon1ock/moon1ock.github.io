@@ -469,9 +469,9 @@ document.addEventListener("pointerdown", () => {
 document.addEventListener("pointerup", () => {
 	isDragging = false;
 	// dragObject = null;
-    dragIdx = null;
+   dragIdx = null;
 	controls.enabled = true;
-    clearCurves()
+   clearCurves()
 } );
 
 
@@ -483,8 +483,15 @@ document.getElementById("resetCamera").addEventListener("click", () => {
 });
 
 
-document.getElementById("resetPins").addEventListener("click", () => {
+document.getElementById("minThisError").addEventListener("click", () => {
+	controls.enabled = false;
+	// controls.enabled = true;
 	
+	
+});
+
+document.getElementById("resetPins").addEventListener("click", () => {
+	return
 });
 
 
