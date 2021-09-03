@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/style.css">
 
   </head>
-  
   <body>
     <div class = "pos">
         <div id = "loc"></div>
@@ -32,12 +31,23 @@
   </div>
 
 
-    <a href="index.html">
-      <button id="switchBtn">Try Globe</button>
-    </a>
+  <div class="btn-group-left">
+    <button id = "resetCamera">Reset Camera</button>
+    <a href="index.html"><button id="switchBtn">Try Sphere</button></a>
+  </div>
 
+  <div class="btn-group-right">
+    <button id = "resetPins">Reset Cones</button>
+  </div>
     <script src="js/THREEx.WindowResize.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
     <script type="module" src="js/2d.js"></script>
   </body>
 </html>
+
+
+<!-- 
+max pan can be limited by modifying the Orbit controls file
+photo from sept 3 20:05
+
+-->

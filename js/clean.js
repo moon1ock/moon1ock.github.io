@@ -246,8 +246,10 @@ function haversine(){
     if (frame!=0){
         return
     }
+    document.getElementById('cityName').innerHTML = "<h3> &nbsp;&nbsp;" + names[dragIdx]+"</h3>"
+
     var home = convertPolarToAng(cities[dragIdx].position);
-    document.getElementById('loc').innerHTML = "lat:" + (Math.round(home.lat*100)/100).toString() + " lon:" +  (Math.round(home.lon*100)/100).toString()
+    document.getElementById('loc').innerHTML = "latitude:" + (Math.round(home.lat*100)/100).toString() + " <br> longitude:" +  (Math.round(home.lon*100)/100).toString()
     for (var i = 0; i<cities.length; i++){
         var away =  convertPolarToAng(cities[i].position);
         var φ1 = home.lat * Math.PI/180;
@@ -265,7 +267,7 @@ function haversine(){
         currDistance[i][dragIdx] = d;
         deltaDistances[dragIdx][i]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
         deltaDistances[i][dragIdx]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
-        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ d.toString() + " km <br/> &nbsp;&nbsp; delta: " + (Math.round(deltaDistances[i][dragIdx]*100)/100).toString();
+        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ d.toString() + " km &nbsp; ∆: " + (Math.round(deltaDistances[i][dragIdx])).toString();
 
     }
     var err = totalError();
@@ -312,6 +314,8 @@ function changeColors(){
 // import cities into array, call them with a for loop
 
 let truePosition = [atlanta,beijing, cape, delhi, easter, florence, goiania, hobart];
+let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Florence", "Goiania", "Hobart"]
+
 
 let trueLocationAng = []
 for (let i=0; i<truePosition.length; i++){
@@ -467,8 +471,27 @@ document.addEventListener("pointermove", event => {
 
     // add a drag-hover effect
     // show up the name on hover
+    raycaster.setFromCamera(mouse, camera);
+
+    if (!isDragging){
+        var intersects = raycaster.intersectObjects(rayCities);
+        if (intersects.length > 0 && intersects[0].object == sphere) { document.body.style.cursor =  'auto';dragIdx = null; clearCurves();return }
+
+        if (intersects.length>0){
+            for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
+            haversine();
+            drawCurves()
+            document.body.style.cursor =  'grab';
+        }
+        else{
+            document.body.style.cursor =  'auto';
+            dragIdx = null;
+            clearCurves();
+        }}
+
+
     if (isDragging) {
-		raycaster.setFromCamera(mouse, camera);
+		// raycaster.setFromCamera(mouse, camera);
 		raycaster.ray.intersectSphere(raySphere, raySphereIntersect);
       	cities[dragIdx].position.addVectors(raySphereIntersect, shift); // shift point
         changeColors();
@@ -484,7 +507,7 @@ document.addEventListener("pointerdown", () => {
 
 	raycaster.setFromCamera(mouse, camera);
 	var intersects = raycaster.intersectObjects(rayCities);
-	if (intersects.length > 0 && intersects[0].object == sphere) {  return }// check if the shpere is intersected before the points are, and return in this case
+	if (intersects.length > 0 && intersects[0].object == sphere) { clearCurves(); return }// check if the shpere is intersected before the points are, and return in this case
 	raycaster.ray.intersectSphere(raySphere, raySphereIntersect); // get base position for later shift
 	if (intersects.length > 0) {
 		controls.enabled = false;
@@ -530,7 +553,7 @@ function animate(){
 	controls.update() // for damping effect
 	// Star rotation happening here
     rotateStars()
-    frame = (frame+1)%4;
+    frame = (frame+1)%2;
     requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }

@@ -12,8 +12,13 @@
 
     <!-- Sidebar -->
     <div id="mySidebar" class="sidebar">
+
       <div class="closebtn" onclick="closeNav()">×</div>
+      <div id = "cityName"></div>
+      <br>
+      
       <div id = "loc"></div>
+      <br>
       <div id = "0"></div>
       <div id = "1"></div>
       <div id = "2"></div>
@@ -29,6 +34,7 @@
     <div class = "buttonContainer">
       <div id="LogoBtn" onclick="openNav()">〉</div>
     </div>
+
     <script type="text/javascript" src="js/sidebar.js"></script>
 
 
@@ -39,12 +45,13 @@
     </div>
 
 
-    <button id="solveBtn">Solve</button>
-    <a href="2d.html">
-      <button id="switchBtn">Try Plane</button>
+    <div class="btn-group-left">
+      <a href="2d.html"><button id="switchBtn">Try Plane</button></a>
+    </div>
 
-    </a>
-
+    <div class="btn-group-right">
+      <button id="solveBtn">Solve</button>
+    </div>
     <!-- Window Resizing Adapt -->
     <script src="js/THREEx.WindowResize.js"></script> 
 

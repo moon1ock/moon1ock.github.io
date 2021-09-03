@@ -11,11 +11,18 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
 camera.position.set(-30, 40, 0);
 camera.lookAt(scene.position);
+
+
+
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 var controls = new MapControls(camera, renderer.domElement);
-controls.maxPolarAngle = 1.72;
+controls.maxPolarAngle = 1.50;
+controls.minDistance = 35;
+controls.maxDistance = 200;
+
+
 /// Light to see the world map
 var light = new THREE.AmbientLight(0xffffff, 1);
 light.position.setScalar(10);
@@ -31,7 +38,7 @@ let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Flore
 //// INIT ////
 
 
-scene.add(new THREE.GridHelper(160, 320, 0x303030, 0x303030 ));
+scene.add(new THREE.GridHelper(160, 160, 0x303030, 0x303030 ));
 //// Let's Create a projection of the Earth onto a plane
 var earthGeom = new THREE.PlaneGeometry(120, 60, 1, 1);
 var earthTexture = new THREE.TextureLoader().load( 'img/globe1.jpg' );
@@ -128,6 +135,7 @@ function makeTextSprite( message, parameters )
 	context.font = "Bold " + fontsize + "px " + fontface;
 
 	// get size data (height depends only on font size)
+
 	var metrics = context.measureText( message );
 	var textWidth = metrics.width;
 
@@ -283,7 +291,7 @@ function getDistance(){
 		return
 	}
 	// reformat into get distance and display distance TODO!
-    document.getElementById('loc').innerHTML = "<h1>" +names[cities[dragIdx].name.charCodeAt(0)-65]+ "</h1>"
+    document.getElementById('loc').innerHTML = "<h3>   &nbsp;&nbsp;" +names[cities[dragIdx].name.charCodeAt(0)-65]+ "</h3>"
 
     for (let i=0; i<cities.length; i++){
 		  var d = Math.round(300*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2))
@@ -291,7 +299,7 @@ function getDistance(){
         currDistance[i][dragIdx] = d;
         deltaDistances[dragIdx][i]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
         deltaDistances[i][dragIdx]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
-        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ Math.round(d).toString() + " km <br/> &nbsp;&nbsp; delta: " + (Math.round(deltaDistances[i][dragIdx])).toString();
+        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +": "+ Math.round(d).toString() + " km &nbsp; ∆: " + (Math.round(deltaDistances[i][dragIdx])).toString() + " km";
 		  var err = totalError();
 		  document.getElementById('totalError').innerHTML = err.toString();
 
@@ -468,9 +476,20 @@ document.addEventListener("pointerup", () => {
 
 
 
+document.getElementById("resetCamera").addEventListener("click", () => {
+	camera.position.set(-30, 40, 0);
+	camera.lookAt(scene.position);
+	controls.reset();
+});
+
+
+document.getElementById("resetPins").addEventListener("click", () => {
+	
+});
+
+
 renderer.setAnimationLoop(() => {
 	rotateStars()
-	frame = (frame+1)%4
-  renderer.render(scene, camera);
-
+	frame = (frame+1)%2;
+   renderer.render(scene, camera);
 })

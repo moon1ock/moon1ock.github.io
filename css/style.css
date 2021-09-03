@@ -21,7 +21,7 @@ body{
   font-size: 15px;
   display: block;
   transition: 0.5s;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .sidebar .closebtn {
@@ -35,6 +35,8 @@ body{
   transform:scale(1.5,1.5);
   -webkit-transform:scale(1.3,1.3);
   -moz-transform:scale(1.3,1.3);
+  cursor: pointer;
+
   }
 
 .buttonContrainer {
@@ -86,14 +88,37 @@ body{
   /* color: lightgreen;
   text-shadow: 0 0 10px greenyellow,0 0 20px darkgreen,0 0 40px darkcyan, 0 0 80px green;; */
 
-
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
 
 }
 
-#solveBtn{
+
+.btn-group-left{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
+
+.btn-group-left button {
+  cursor: pointer; /* Pointer/hand icon */
+  display: block; /* Make the buttons appear below each other */
+}
+
+.btn-group-right{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+
+.btn-group-right button {
+  cursor: pointer; /* Pointer/hand icon */
+  display: block; /* Make the buttons appear below each other */
+}
+
+
+/* #solveBtn{
   position: fixed;
   right: 0;
   bottom: 0;
@@ -103,6 +128,11 @@ body{
   left: 0;
   bottom: 0;
 }
+#resetCamera{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+} */
 
 
 
