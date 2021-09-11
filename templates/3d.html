@@ -2,10 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="img/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.ico') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Globe Earth</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>3d Earth</title>
+    <!-- <link rel="stylesheet" href="static/style.css"> -->
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
 
@@ -35,30 +36,34 @@
       <div id="LogoBtn" onclick="openNav()">〉</div>
     </div>
 
-    <script type="text/javascript" src="js/sidebar.js"></script>
+    <!-- <script type="text/javascript" src="js/sidebar.js"></script> -->
+    <script type="text/javascript" src="{{ url_for('static', filename='sidebar.js') }}"></script>
+
 
 
     <div class="totalError" id = "totalErrorColor">
 
-        <h2 style="margin-top: 0;">Total error: <div style="display: inline" id = 'totalError'>0</div> km</h2>
+        <h2 style="margin-top: 0;">Difference: <div style="display: inline" id = 'totalError'>0</div> km</h2>
 
     </div>
 
 
     <div class="btn-group-left">
-      <a href="2d.html"><button id="switchBtn">Try Plane</button></a>
+      <a href="{{url_for('plane') }}"><button id="switchBtn">Try Plane</button></a>
     </div>
 
     <div class="btn-group-right">
       <button id="solveBtn">Solve</button>
     </div>
     <!-- Window Resizing Adapt -->
-    <script src="js/THREEx.WindowResize.js"></script> 
+
+    <script src="{{ url_for('static', filename='THREEx.WindowResize.js') }}"></script>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
 
-    <script type="module" src="js/clean.js"></script>
-    <!-- <script type="module" src="js/mini.js"></script> -->
+
+    <script type = "module" src="{{ url_for('static', filename='3d.js') }}"></script>
 
 
   </body>

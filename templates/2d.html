@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="img/favicon.ico" />
-
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.ico') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flat Earth</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>2d Earth</title>
+
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
   </head>
   <body>
@@ -26,14 +26,16 @@
     </div>
     <div class="totalError" id = "totalErrorColor">
 
-      <h2 style="margin-top: 0;">Total error: <div style="display: inline" id = 'totalError'>0</div> km</h2>
+      <h2 style="margin-top: 0;">Difference: <div style="display: inline" id = 'totalError'>0</div> km</h2>
 
   </div>
 
 
   <div class="btn-group-left">
     <button id = "resetCamera">Reset Camera</button>
-    <a href="index.html"><button id="switchBtn">Try Sphere</button></a>
+
+    <a href="{{url_for('globe') }}"><button id="switchBtn">Try Plane</button></a>
+
   </div>
 
   <div class="btn-group-right">
@@ -41,9 +43,17 @@
     <button id = "minThisError">Solve City</button>
 
   </div>
-    <script src="js/THREEx.WindowResize.js"></script> 
+    <script src="{{ url_for('static', filename='THREEx.WindowResize.js') }}"></script>
+
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
-    <script type="module" src="js/2d.js"></script>
+    <!-- <script type="module" src="js/2d.js"></script> -->
+
+    <script type = "module" src="{{ url_for('static', filename='2d.js') }}"></script>
+
+
   </body>
 </html>
 

@@ -41,7 +41,7 @@ let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Flore
 scene.add(new THREE.GridHelper(160, 160, 0x303030, 0x303030 ));
 //// Let's Create a projection of the Earth onto a plane
 var earthGeom = new THREE.PlaneGeometry(120, 60, 1, 1);
-var earthTexture = new THREE.TextureLoader().load( 'img/globe1.jpg' );
+var earthTexture = new THREE.TextureLoader().load('./static/img/globe1.jpg');
 var earthMaterial = new THREE.MeshLambertMaterial( { map: earthTexture } );
 earthImage = new THREE.Mesh(earthGeom, earthMaterial);
 earthImage.receiveShadow = true;
@@ -49,7 +49,7 @@ earthImage.receiveShadow = true;
 earthImage.rotation.x = -0.5 * Math.PI;
 earthImage.rotation.z = -0.5 * Math.PI;
 
-earthImage.position.set(0,0,0);
+earthImage.position.set(0,-0.05,0);
 // add the plane to the scene
 scene.add(earthImage);
 
@@ -286,24 +286,20 @@ document.getElementById('totalError').innerHTML = totalError().toString();
 
 
 
-function getDistance(){
-	if (frame!=0){
-		return
-	}
+function getDistance(currIdx){
+
 	// reformat into get distance and display distance TODO!
-    document.getElementById('loc').innerHTML = "<h3>   &nbsp;&nbsp;" +names[cities[dragIdx].name.charCodeAt(0)-65]+ "</h3>"
+    document.getElementById('loc').innerHTML = "<h3>   &nbsp;&nbsp;" +names[cities[currIdx].name.charCodeAt(0)-65]+ "</h3>"
 
     for (let i=0; i<cities.length; i++){
-		  var d = Math.round(300*Math.sqrt((cities[dragIdx].position.x - cities[i].position.x)**2 +  (cities[dragIdx].position.z - cities[i].position.z)**2))
-		  currDistance[dragIdx][i] = d;
-        currDistance[i][dragIdx] = d;
-        deltaDistances[dragIdx][i]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
-        deltaDistances[i][dragIdx]  = currDistance[dragIdx][i] - trueDistance[dragIdx][i];
-        document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +": "+ Math.round(d).toString() + " km &nbsp; ∆: " + (Math.round(deltaDistances[i][dragIdx])).toString() + " km";
+		  var d = Math.round(300*Math.sqrt((cities[currIdx].position.x - cities[i].position.x)**2 +  (cities[currIdx].position.z - cities[i].position.z)**2))
+		  currDistance[currIdx][i] = d;
+        currDistance[i][currIdx] = d;
+        deltaDistances[currIdx][i]  = currDistance[currIdx][i] - trueDistance[currIdx][i];
+        deltaDistances[i][currIdx]  = currDistance[currIdx][i] - trueDistance[currIdx][i];
+        document.getElementById(i.toString()).innerHTML =cities[currIdx].name+ "->"+ cities[i].name +": "+ Math.round(d).toString() + " km &nbsp; ∆: " + (Math.round(deltaDistances[i][currIdx])).toString() + " km";
 		  var err = totalError();
 		  document.getElementById('totalError').innerHTML = err.toString();
-
-		//   document.getElementById(i.toString()).innerHTML =cities[dragIdx].name+ "->"+ cities[i].name +":"+ d.toString()  + " km <br/> &nbsp;&nbsp; delta: "// + (Math.round(deltaDistances[i][dragIdx]*100)/100).toString();
 
     }
 
@@ -329,13 +325,13 @@ let points = [];
 
 let curve_meshes = [];
 
-function drawCurves(){
+function drawCurves(idx){
 	clearCurves()
 	curve_meshes = [];
 
-	base.set(cities[dragIdx].position.x, cities[dragIdx].position.y,cities[dragIdx].position.z)
+	base.set(cities[idx].position.x, cities[idx].position.y,cities[idx].position.z)
 	for (let i=0;i<cities.length; i++){
-		if (i == dragIdx){continue}
+		if (i == idx){continue}
 		dest.set(cities[i].position.x,cities[i].position.y,cities[i].position.z)
 		points = []
 		for (let i =0; i<=12; i++){
@@ -343,7 +339,7 @@ function drawCurves(){
 			points.push(p);
 
 		}
-		var green = Math.abs(deltaDistances[dragIdx][i]) < 70 ? true: false;
+		var green = Math.abs(deltaDistances[idx][i]) < 70 ? true: false;
 		curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: green?0x3acabb:0xff8400})));
 
 		// curve_meshes.push(new THREE.Mesh(new THREE.TubeBufferGeometry(new THREE.CatmullRomCurve3(points),64,0.05,50,false),  new THREE.MeshBasicMaterial({color: 0x0000cc})));
@@ -396,11 +392,15 @@ var shift = new THREE.Vector3(0,0,0); // distance between position of an object 
 var moveVector = new THREE.Vector3(0,0,0);
 var isDragging = false;
 var dragIdx;
+var showIdx;
 
-
+var solveCity;
+var lines = []; // used to store the line equations for the city solution
 
 // events
 document.addEventListener("pointermove", event => {
+	if (solveCity) return;
+
   	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
@@ -409,14 +409,15 @@ document.addEventListener("pointermove", event => {
 
         if (raycaster.intersectObjects(cities).length>0){
             for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
-            getDistance()
-            drawCurves()
+            if ( !frame) getDistance(dragIdx);
+            drawCurves(dragIdx)
 
             document.body.style.cursor =  'grab';
         }
         else{
             document.body.style.cursor =  'auto';
             dragIdx = null;
+				if (showIdx) getDistance(showIdx)
             clearCurves();
         }}
 
@@ -437,8 +438,9 @@ document.addEventListener("pointermove", event => {
 				moveVector.z = -80
 					}
         cities[dragIdx].position.set(moveVector.x,0,moveVector.z)
-        getDistance()
-        drawCurves()
+		  showIdx = dragIdx;
+        if ( !frame) getDistance(dragIdx);
+        drawCurves(dragIdx)
 
     }
 });
@@ -447,7 +449,7 @@ document.addEventListener("pointermove", event => {
 
 
 document.addEventListener("pointerdown", () => {
-
+	if (solveCity) return;
     var intersects = raycaster.intersectObjects(cities);
     raycaster.ray.intersectPlane(plane, planeIntersect);
 
@@ -458,8 +460,9 @@ document.addEventListener("pointerdown", () => {
             shift.subVectors(intersects[0].object.position, intersects[0].point);
             isDragging = true;
             for (let i = 0; i<cities.length;i++){if (cities[i]==intersects[0].object) {dragIdx = i; break }} // save the label to drag
-        getDistance()
-        drawCurves()
+			if ( !frame) getDistance(dragIdx);
+        drawCurves(dragIdx)
+		  showIdx = dragIdx;
     }
 
 } );
@@ -467,6 +470,7 @@ document.addEventListener("pointerdown", () => {
 
 
 document.addEventListener("pointerup", () => {
+	if (solveCity) return;
 	isDragging = false;
 	// dragObject = null;
    dragIdx = null;
@@ -483,11 +487,64 @@ document.getElementById("resetCamera").addEventListener("click", () => {
 });
 
 
+// Solve the errors of all surrounding cities
+
+function solveCityAnimation(){
+	// while ((deltaDistances[showIdx].reduce((a,b)=> Math.abs(a)+Math.abs(b), 0)) > 10){
+	var flag = false;
+
+	for (var i = 0; i<lines.length;i++){
+			// check if the cone is too close
+			if (i == showIdx) continue;
+
+			if (Math.abs( deltaDistances[showIdx][i]) < 80 ) {
+				var dx = lines[i][4];
+				var dz = lines[i][0]*dx+ lines[i][1];
+				cities[i].position.set(dx,0,dz)
+				continue;
+			}
+			// place it correctly
+
+			var dx = cities[i].position.x + 0.1*(lines[i][3]) * lines[i][2];
+			var dz = lines[i][0]*dx+ lines[i][1];
+			cities[i].position.set(dx,0,dz)
+			flag = true;
+	}
+	getDistance(showIdx);
+	drawCurves(showIdx);
+
+	// solveCity = false;
+	if (! flag) solveCity = false;
+}
+
+
 document.getElementById("minThisError").addEventListener("click", () => {
-	controls.enabled = false;
+	// controls.enabled = false;
 	// controls.enabled = true;
-	
-	
+	if (showIdx == null) return;
+	lines = [];
+	// let's get the equations of the lines on which we will solve the cities;
+	for (var i = 0; i<cities.length; i++){
+		if (i == showIdx) {lines.push([0,0]); continue;}
+		if (cities[i].position.x == cities[showIdx].position.x) { cities[i].position.x += 1}
+		var slope = (cities[i].position.z - cities[showIdx].position.z)/ ((cities[i].position.x - cities[showIdx].position.x))
+		var b = cities[showIdx].position.z - slope*cities[showIdx].position.x
+		var side = 1;
+		// get which way to move
+		if (cities[i].position.x > cities[showIdx].position.x && deltaDistances[showIdx][i] > 0) side = -1;
+		else if (cities[i].position.x < cities[showIdx].position.x && deltaDistances[showIdx][i] < 0) side = -1;
+		// let's also standardize the moves
+
+		var move = Math.sqrt( 1 / ( 1 + slope*slope))
+
+		var rx = Math.sqrt( Math.pow(trueDistance[i][showIdx]/300, 2) / ((slope*slope + 1) )) // need to divide over 300 since that's how we get the distance
+		if (cities[i].position.x < cities[showIdx].position.x) rx = (-1)*rx;
+		rx = rx + cities[showIdx].position.x;
+
+		lines.push([slope, b, side, move, rx])
+	}
+	solveCity = true;
+
 });
 
 document.getElementById("resetPins").addEventListener("click", () => {
@@ -498,5 +555,9 @@ document.getElementById("resetPins").addEventListener("click", () => {
 renderer.setAnimationLoop(() => {
 	rotateStars()
 	frame = (frame+1)%2;
+	if (solveCity){
+		solveCityAnimation();
+	}
    renderer.render(scene, camera);
+
 })

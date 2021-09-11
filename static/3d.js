@@ -67,7 +67,7 @@ function createGlobe(){
     sphere = new THREE.Mesh(
         new THREE.SphereBufferGeometry(30,50,50),
         new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load('./img/globe1.jpg'),
+        map: new THREE.TextureLoader().load('./static/img/globe1.jpg'),
         })
     )
     sphere.position.set(0,0,0);
