@@ -38,10 +38,46 @@ let names = ["Atlanta", "Beijing", "Cape Town", "Delhi", "Easter Island", "Flore
 //// INIT ////
 
 
-scene.add(new THREE.GridHelper(160, 160, 0x303030, 0x303030 ));
+// scene.add(new THREE.GridHelper(160, 160, 0x303030, 0x303030 ));
+
+
+// add a Polar GRID
+const wireframe = new THREE.Mesh(
+	new THREE.CircleBufferGeometry(110, 32),
+		 new THREE.MeshBasicMaterial({
+		 color: 0xBBBBBB,
+		 wireframe: true,
+		 transparent: true,
+		 opacity: 0.3
+	})
+)
+var material = new THREE.LineBasicMaterial( {color: 0xBBBBBB,
+	transparent: true,
+	opacity: 0.40 });
+
+for ( let amplitude = 0; amplitude<=110; amplitude+=10){
+	var resolution = 90;
+	var size = 360 / resolution;
+	var circleVertices = [];
+	for(var i = 0; i <= resolution; i++) {
+		var segment = ( i * size ) * Math.PI / 180;
+		circleVertices.push( new THREE.Vector3( Math.cos( segment ) * amplitude, 0, Math.sin( segment ) * amplitude ) );
+	}
+
+	var geometry = new THREE.BufferGeometry().setFromPoints(circleVertices)
+	var line = new THREE.Line( geometry, material );
+
+	// line
+	line.rotation.x = -0.5 * Math.PI;
+	wireframe.add(line);
+}
+wireframe.rotation.x = -0.5 * Math.PI;
+scene.add(wireframe)
+
+
 //// Let's Create a projection of the Earth onto a plane
-var earthGeom = new THREE.PlaneGeometry(120, 60, 1, 1);
-var earthTexture = new THREE.TextureLoader().load('./static/img/globe1.jpg');
+var earthGeom = new THREE.CircleGeometry(80, 80);
+var earthTexture = new THREE.TextureLoader().load('./static/img/disk.png');
 var earthMaterial = new THREE.MeshLambertMaterial( { map: earthTexture } );
 earthImage = new THREE.Mesh(earthGeom, earthMaterial);
 earthImage.receiveShadow = true;
@@ -307,16 +343,6 @@ function getDistance(currIdx){
 
 
 
-
-
-
-
-
-
-
-
-
-
 ////////////// CURVES //////////
 
 let base = new THREE.Vector3();
@@ -425,6 +451,9 @@ document.addEventListener("pointermove", event => {
 
         raycaster.ray.intersectPlane(plane, planeIntersect);
 		  moveVector.addVectors(planeIntersect, shift);
+		  // set borders based on mouse.x
+		  // https://gamedev.stackexchange.com/questions/9395/how-do-i-restrict-the-movement-of-a-point-to-within-a-radius-of-another
+
 			if (moveVector.x > 80){
 				moveVector.x = 80
 			}
@@ -436,7 +465,8 @@ document.addEventListener("pointermove", event => {
 			}
 			else if (moveVector.z < -80){
 				moveVector.z = -80
-					}
+			}
+
         cities[dragIdx].position.set(moveVector.x,0,moveVector.z)
 		  showIdx = dragIdx;
         if ( !frame) getDistance(dragIdx);
@@ -515,6 +545,9 @@ function solveCityAnimation(){
 
 	// solveCity = false;
 	if (! flag) solveCity = false;
+
+	// get the rest of the differences and combine it for the total error
+
 }
 
 
