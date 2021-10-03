@@ -25,4 +25,4 @@ if __name__ == '__main__':
 # 
 # FLASK_APP=main.py FLASK_ENV=development flask run
 #gcloud app deploy
-#gcloud app brouse
+#gcloud app browse
