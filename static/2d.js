@@ -4,9 +4,6 @@ import {atlanta, beijing, cape, delhi, easter, florence, goiania,hobart} from '.
 
 
 
-
-
-
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
 camera.position.set(-30, 40, 0);
@@ -386,18 +383,6 @@ function clearCurves(){
 	}
 }
 //////////
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /////////////////////////////
